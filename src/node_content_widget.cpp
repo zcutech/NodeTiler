@@ -15,7 +15,7 @@ QDMNodeContentWidget::QDMNodeContentWidget(Node *node, QWidget *parent):
     Serializable(),
     node(node),
     layout(new QVBoxLayout()),
-    wdgLabel(new QLabel("Label标签", this))
+    wdgLabel(new QLabel("Label Text", this))
 {
     this->layout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(this->layout);
