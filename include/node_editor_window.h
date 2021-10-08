@@ -57,14 +57,14 @@ protected:
     void onClose() { QMainWindow::close(); }
     void readSettings();
     void writeSettings();
+    QAction* createAct(const QString& name, const QString& shortcut,
+                       const QString& tooltip, void (NodeEditorWindow::*callback)());
 protected slots:
     void onScenePosChanged(QPointF p);
 private:
     QString nameAuthor;
     QString nameProduct;
     QLabel *statusMousePos;
-    QAction* createAct(const QString& name, const QString& shortcut,
-                       const QString& tooltip, void (NodeEditorWindow::*callback)());
 };
 
 #endif //NODETILER_NODE_EDITOR_WINDOW_H
