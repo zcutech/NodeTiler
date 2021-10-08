@@ -32,9 +32,8 @@ public:
     enum { Type = GRAPH_TYPE_NODE };
     inline int type() const override { return Type; }       // 用于在scene事件中判断对象类型，以及cast
     Node *node;
-private:
+protected:
     static qint64 lastDeSelNodeTime;      // 直接点击选择另一个node时，忽略取消选择事件
-
     void onSelected(bool mergeLastDeselection=false);
     void onDeselected();
     void initTitle();

@@ -8,6 +8,7 @@
 #include <functional>
 #include <vector>
 #include <QtCore>
+#include <QtGui>
 
 #include "node_common.h"
 #include "node_serializable.h"
@@ -39,8 +40,8 @@ public:
     void addHasBeenModifiedListeners(const std::function<void()>& callback);
     void addItemSelectedListener(const std::function<void()>& callback);
     void addItemDeselectedListener(const std::function<void()>& callback);
-    void addDragEnterListener(const std::function<void()>& callback) const;
-    void addDropListener(const std::function<void()>& callback) const;
+    void addDragEnterListener(const std::function<void(QDragEnterEvent *event)>& callback) const;
+    void addDropListener(const std::function<void(QDropEvent *event)>& callback) const;
     void addNode(Node*);
     void addWire(Wire*);
     void removeNode(Node*);

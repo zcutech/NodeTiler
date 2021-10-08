@@ -31,7 +31,6 @@ public:
 protected:
     const QString filePath = __FILE__;
     const QString& getFilePath() const override { return this->filePath; }
-private:
     Node *node;
     QVBoxLayout *layout;
     QLabel *wdgLabel;

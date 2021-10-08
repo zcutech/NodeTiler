@@ -19,6 +19,7 @@ public:
     QDMGraphicsView *view;
     Scene *scene;
     QString fileName;
+
     void setTitle();
     bool isModified() const;
     bool isFilenameSet() const;

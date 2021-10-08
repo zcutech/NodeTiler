@@ -2,7 +2,6 @@
 // Created by Charlie Zhong on 2021/9/6.
 //
 
-#include <iomanip>
 #include <algorithm>
 
 #include "node_scene.h"
@@ -111,13 +110,13 @@ void Scene::addItemDeselectedListener(const std::function<void()> &callback)
     this->_itemDeselectedListeners.push_back(callback);
 }
 
-void Scene::addDragEnterListener(const std::function<void()> &callback) const
+void Scene::addDragEnterListener(const std::function<void(QDragEnterEvent *event)> &callback) const
 {
     auto view = qobject_cast<QDMGraphicsView*>(this->grScene->views()[0]);
     view->addDragEnterListener(callback);
 }
 
-void Scene::addDropListener(const std::function<void()> &callback) const
+void Scene::addDropListener(const std::function<void(QDropEvent *event)> &callback) const
 {
     auto view = qobject_cast<QDMGraphicsView*>(this->grScene->views()[0]);
     view->addDropListener(callback);

@@ -74,21 +74,21 @@ QDMGraphicsView::QDMGraphicsView(QDMGraphicsScene *_grScene, QWidget *parent):
 void QDMGraphicsView::dragEnterEvent(QDragEnterEvent *event)
 {
     for (const auto& callback : this->_dragEnterListeners)
-        callback();
+        callback(event);
 }
 
 void QDMGraphicsView::dropEvent(QDropEvent *event)
 {
     for (const auto& callback : this->_dropListeners)
-        callback();
+        callback(event);
 }
 
-void QDMGraphicsView::addDragEnterListener(const std::function<void()> &callback)
+void QDMGraphicsView::addDragEnterListener(const std::function<void(QDragEnterEvent *event)> &callback)
 {
     this->_dragEnterListeners.push_back(callback);
 }
 
-void QDMGraphicsView::addDropListener(const std::function<void()> &callback)
+void QDMGraphicsView::addDropListener(const std::function<void(QDropEvent *event)> &callback)
 {
     this->_dropListeners.push_back(callback);
 }

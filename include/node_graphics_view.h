@@ -27,8 +27,8 @@ public:
     ~QDMGraphicsView() override = default;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-    void addDragEnterListener(const std::function<void()>& callback);
-    void addDropListener(const std::function<void()>& callback);
+    void addDragEnterListener(const std::function<void(QDragEnterEvent *event)>& callback);
+    void addDropListener(const std::function<void(QDropEvent *event)>& callback);
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -45,8 +45,8 @@ public:
     QPointF last_LMB_ClickScenePos;
     QPointF lastSceneMousePosition;
     void deleteSelected(const QString& cutDesc="");
-    std::vector<std::function<void()>> _dragEnterListeners;
-    std::vector<std::function<void()>> _dropListeners;
+    std::vector<std::function<void(QDragEnterEvent *event)>> _dragEnterListeners;
+    std::vector<std::function<void(QDropEvent *event)>> _dropListeners;
 signals:
     void scenePosChanged(QPointF p);
 private:

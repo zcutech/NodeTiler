@@ -63,7 +63,6 @@ public:
 protected:
     const QString filePath = __FILE__;
     const QString& getFilePath() const override { return this->filePath; }
-private:
     QDMNodeContentWidget *content;
     QString _title;
     size_t socketSpacing;
