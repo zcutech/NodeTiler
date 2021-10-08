@@ -36,7 +36,7 @@ Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_
     this->endSocket(endSocket);
 }
 
-inline Socket* Wire::startSocket() const
+Socket* Wire::startSocket() const
 {
     return this->_startSocket;
 }
@@ -51,7 +51,7 @@ void Wire::startSocket(Socket *s)
     }
 }
 
-inline Socket* Wire::endSocket() const
+Socket* Wire::endSocket() const
 {
     return this->_endSocket;
 }
@@ -66,7 +66,7 @@ void Wire::endSocket(Socket *s)
     }
 }
 
-inline WIRE_TYPE Wire::wireType() const
+WIRE_TYPE Wire::wireType() const
 {
     return this->_wireType;
 }

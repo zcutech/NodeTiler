@@ -99,7 +99,7 @@ void Node::setPos(float x, float y)
     this->grNode->setPos(QPointF(x, y));
 }
 
-inline QString Node::title() const
+QString Node::title() const
 {
     return this->_title;
 }
