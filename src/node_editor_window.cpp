@@ -18,7 +18,7 @@ NodeEditorWindow::NodeEditorWindow(QApplication *app):
         app(app),
         nameAuthor("ZCutech"),
         nameProduct("NodeEditor"),
-//        nodeEditor(new NodeEditorWidget(this->app, this)),
+        nodeEditor(Q_NULLPTR),
         fileMenu(Q_NULLPTR),
         editMenu(Q_NULLPTR),
         actNew(Q_NULLPTR),
@@ -34,8 +34,7 @@ NodeEditorWindow::NodeEditorWindow(QApplication *app):
         actDelete(Q_NULLPTR),
         statusMousePos(Q_NULLPTR)
 {
-    this->nodeEditor = new NodeEditorWidget(this->app, this);
-    this->initUI();
+
 }
 
 void NodeEditorWindow::demoAddNode() {
@@ -48,6 +47,7 @@ void NodeEditorWindow::initUI()
     this->createActions();
     this->createMenus();
 
+    this->nodeEditor = new NodeEditorWidget(this->app, this);
     this->nodeEditor->scene->addHasBeenModifiedListeners([this] { this->setTitle(); });
     this->setCentralWidget(this->nodeEditor);
 

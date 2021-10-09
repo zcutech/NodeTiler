@@ -15,6 +15,7 @@ class NodeEditorWindow : public QMainWindow
 public:
     explicit NodeEditorWindow(QApplication *app);
     ~NodeEditorWindow() override = default;
+    virtual void initUI();
     void demoAddNode();
 protected:
     QApplication *app;
@@ -35,17 +36,16 @@ protected:
     QAction* actPaste;
     QAction* actDelete;
 
-    void initUI();
     void createStatusBar();
-    void createActions();
-    void createMenus();
-    void setTitle();
+    virtual void createActions();
+    virtual void createMenus();
+    virtual void setTitle();
     void closeEvent(QCloseEvent *event) override;
     bool isModified() const;
-    NodeEditorWidget* getCurrentNodeEditorWidget() const;
+    virtual NodeEditorWidget* getCurrentNodeEditorWidget() const;
     bool maybeSave();
-    void onFileNew();
-    bool onFileOpen();
+    virtual void onFileNew();
+    virtual bool onFileOpen();
     bool onFileSave();
     bool onFileSaveAs();
     void onEditUndo();

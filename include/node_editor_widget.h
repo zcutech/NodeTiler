@@ -20,9 +20,11 @@ public:
     Scene *scene;
     QString fileName;
 
-    void setTitle();
+    virtual void setTitle();
     bool isModified() const;
     bool isFilenameSet() const;
+    QList<QGraphicsItem*> getSelectedItems() const;
+    bool hasSelectedItems() const;
     QString getUserFriendlyFilename() const;
     void fileNew();
     bool fileLoad(const QString& filename);
@@ -31,8 +33,6 @@ public:
     void add_debug_content();
 protected:
     QApplication *app;
-    QList<QGraphicsItem*> getSelectedItems() const;
-    bool hasSelectedItems() const;
     bool canUndo() const;
     bool canRedo() const;
 private:

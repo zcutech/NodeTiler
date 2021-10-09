@@ -35,7 +35,7 @@ NodeEditorWidget::NodeEditorWidget(QApplication *app, QWidget *parent):
 }
 
 void NodeEditorWidget::setTitle()
-{}
+{;}
 
 bool NodeEditorWidget::isModified() const
 {

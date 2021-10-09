@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     loadStyleSheet(&a, QFileInfo(__FILE__).absolutePath() + "/qss/nodestyle.qss");
 
     auto *wnd = new NodeEditorWindow(&a);
+    wnd->initUI();
     wnd->demoAddNode();
 
     return QApplication::exec();
