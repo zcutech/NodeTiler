@@ -16,37 +16,43 @@
 #include "node_wire.h"
 
 #include <iostream>
-#include <iomanip>
 
 
 Node::Node(Scene *_scene, const std::string& _title,
-           const std::vector<SOCKET_TYPE>& inputs, const std::vector<SOCKET_TYPE>& outputs):
+           std::vector<SOCKET_TYPE>  inputs, std::vector<SOCKET_TYPE>  outputs):
    Serializable(),
    scene(_scene),
+   _title(QString::fromStdString(_title)),
    content(Q_NULLPTR),
    grNode(Q_NULLPTR),
    inputSocketPos(SCT_AT_LEFT_BOTTOM),
    outputSocketPos(SCT_AT_RIGHT_TOP),
    socketSpacing(0),                       // socket的间距
    inputs({}),
-   outputs({})
+   outputs({}),
+   inTypeVec(std::move(inputs)),
+   outTypeVec(std::move(outputs))
 {
-    std::cout << "Enter Node - 1" << std::endl;
+}
 
-    this->initInnerClasses();
+Node* Node::init()
+{
     this->initSettings();
-    this->title(_title);
+    this->initInnerClasses();
+    this->title(this->_title.toStdString());
 
-    this->initSockets(inputs, outputs);
+    this->initSockets(this->inTypeVec, this->outTypeVec);
 
     this->scene->addNode(this);
     this->scene->grScene->addItem(this->grNode);
+
+    return this;
 }
 
 void Node::initInnerClasses()
 {
-    this->content = new QDMNodeContentWidget(this);
-    this->grNode = new QDMGraphicsNode(this);
+    this->content = (new QDMNodeContentWidget(this))->init();
+    this->grNode = (new QDMGraphicsNode(this))->init();
     this->inputSocketPos = SCT_AT_LEFT_BOTTOM;
     this->outputSocketPos = SCT_AT_RIGHT_TOP;
 }
@@ -57,19 +63,19 @@ void Node::initSettings()
 }
 
 // 创建输入和输出 sockets
-void Node::initSockets(const std::vector<SOCKET_TYPE> &_inputs,
-                       const std::vector<SOCKET_TYPE> &_outputs, bool resetAll)
+void Node::initSockets(std::vector<SOCKET_TYPE> _inputs,
+                       std::vector<SOCKET_TYPE> _outputs, bool resetAll)
 {
     if (resetAll) {
         // 清除旧的sockets
-        for (auto &socket : this->inputs)
+        for (auto &socket : this->inputs) {
             this->scene->grScene->removeItem(socket->grSocket);
+        }
         for (auto &socket : this->outputs)
             this->scene->grScene->removeItem(socket->grSocket);
         this->inputs.clear();
         this->outputs.clear();
     }
-
     size_t counter = 0;
     for (auto i : _inputs) {
         auto socket = new Socket(this, counter, this->inputSocketPos, i);

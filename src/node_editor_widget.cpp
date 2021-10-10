@@ -121,18 +121,18 @@ bool NodeEditorWidget::fileSave(const QString& filename)
 
 void NodeEditorWidget::addNode()
 {
-    auto node1 = new Node(this->scene, "Demo Node1",
-                          {SCT_TYPE_1, SCT_TYPE_3, SCT_TYPE_4}, {SCT_TYPE_2,});
-//    auto node2 = new Node(this->scene, "Demo Node2",
-//                          {SCT_TYPE_1, SCT_TYPE_5, SCT_TYPE_6}, {SCT_TYPE_2,});
-//    auto node3 = new Node(this->scene, "Demo Node3",
-//                          {SCT_TYPE_1, SCT_TYPE_1, SCT_TYPE_3}, {SCT_TYPE_2,});
-    node1->setPos(-350, -250);
-//    node2->setPos(-75, 0);
-//    node3->setPos(200, -150);
+//    auto node1 = (new Node(this->scene, "Demo Node1",
+//                          {SCT_TYPE_1, SCT_TYPE_3, SCT_TYPE_4}, {SCT_TYPE_2,}))->init();
+    auto node2 = (new Node(this->scene, "Demo Node2",
+                          {SCT_TYPE_1, SCT_TYPE_5, SCT_TYPE_6}, {SCT_TYPE_2,}))->init();
+    auto node3 = (new Node(this->scene, "Demo Node3",
+                          {SCT_TYPE_1, SCT_TYPE_1, SCT_TYPE_3}, {SCT_TYPE_2,}))->init();
+//    node1->setPos(-350, -250);
+    node2->setPos(-75, 0);
+    node3->setPos(200, -150);
 
 //    auto wire1 = new Wire(this->scene, node1->outputs[0], node2->inputs[0]);
-//    auto wire2 = new Wire(this->scene, node2->outputs[0], node3->inputs[0], WIRE_TYPE_BEZIER);
+    auto wire2 = new Wire(this->scene, node2->outputs[0], node3->inputs[0], WIRE_TYPE_BEZIER);
 //    auto wire3 = new Wire(this->scene, node3->outputs[0], node3->inputs[2], WIRE_TYPE_BEZIER);
 
     this->scene->history->storeInitialHistory();

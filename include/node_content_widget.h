@@ -20,8 +20,10 @@ class QDMNodeContentWidget : public QWidget, public Serializable
 {
     Q_OBJECT
 public:
+    // 必须在构造后先调用init方法
     explicit QDMNodeContentWidget(Node* node, QWidget *parent=Q_NULLPTR);
     ~QDMNodeContentWidget() override = default;
+    virtual QDMNodeContentWidget* init();
     void setEditingFlag(int value);
     json serialize() override;
     bool deserialize(json data, node_HashMap *hashMap, bool restoreId) override;
@@ -29,8 +31,6 @@ public:
                               json& changeMap, json& removeMap) override {};
     void deserializeIncremental(json changeMap, bool isUndo, node_HashMap *hashMap) override {};
 protected:
-    const QString filePath = __FILE__;
-    const QString& getFilePath() const override { return this->filePath; }
     Node *node;
     QVBoxLayout *layout;
     QLabel *wdgLabel;

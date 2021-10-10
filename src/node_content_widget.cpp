@@ -14,14 +14,22 @@ QDMNodeContentWidget::QDMNodeContentWidget(Node *node, QWidget *parent):
     QWidget(parent),
     Serializable(),
     node(node),
-    layout(new QVBoxLayout()),
-    wdgLabel(new QLabel("Label Text", this))
+    layout(Q_NULLPTR),
+    wdgLabel(Q_NULLPTR)
 {
+}
+
+QDMNodeContentWidget* QDMNodeContentWidget::init()
+{
+    this->layout = new QVBoxLayout();
+    this->wdgLabel = new QLabel("Label Text", this);
     this->layout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(this->layout);
 
     this->layout->addWidget(this->wdgLabel);
     this->layout->addWidget(new QDMQTextEdit(QString("Foo bar - %1").arg(this->id.c_str())));
+
+    return this;
 }
 
 void QDMNodeContentWidget::setEditingFlag(int value) {

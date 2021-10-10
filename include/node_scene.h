@@ -66,10 +66,6 @@ protected slots:
     void onItemSelected(bool mergeLastDeselection = false);
     void onItemDeselected();
     void onSelsChanged();
-
-protected:
-    const QString filePath = __FILE__;
-    const QString& getFilePath() const override { return this->filePath; }
 private:
     int sceneWidth;
     int sceneHeight;

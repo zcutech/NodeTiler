@@ -34,10 +34,9 @@ Serializable::Serializable()
 }
 
 std::ostream &operator<<(std::ostream &os, const Serializable &s) {
-    QString fileName = QFileInfo(s.getFilePath()).baseName();
     QString typeInfo = QString(typeid(s).name()).remove( QRegExp("^[0-9]*") );
     QString objectId = QString("0x%1").arg((quintptr)(&s), QT_POINTER_SIZE * 2, 16, QChar('0'));
-    auto desc = QString("<%1.%2 object at %3>").arg(fileName, typeInfo, objectId);
+    auto desc = QString("<%1 object at %3>").arg(typeInfo, objectId);
     return (os << desc.toStdString());
 }
 

@@ -44,10 +44,6 @@ public:
     static void extractSerialDiff(json anotherSerial, json myArray,
                                   json& changeMap, json& removeMap, json& foundSerial);
     static void mergeWithIncrement(json& origSerial, json changeMap, json removeMap);
-
-protected:
-    const QString filePath = __FILE__;
-    const QString& getFilePath() const override { return this->filePath; }
 private:
     size_t index;
     SOCKET_TYPE socketType;

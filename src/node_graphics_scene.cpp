@@ -67,5 +67,5 @@ void QDMGraphicsScene::drawBackground(QPainter *painter, const QRectF &rect)
 
 // 不允许drag事件，除非重写dragMoveEvent
 void QDMGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
-    QGraphicsScene::dragMoveEvent(event);
+//    QGraphicsScene::dragMoveEvent(event);
 }

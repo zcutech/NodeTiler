@@ -11,7 +11,6 @@
 #include "node_graphics_scene.h"
 
 #include <iostream>
-#include <utility>
 
 
 qint64 QDMGraphicsNode::lastDeSelNodeTime = 0;
@@ -23,29 +22,48 @@ QDMGraphicsNode::QDMGraphicsNode(Node *node, QGraphicsItem *parent):
     grContent(Q_NULLPTR),
     _title(""),
     title_item(Q_NULLPTR),
-    wasMoved(false),
-    width(180),                         // 节点宽度
-    height(240),                        // 节点高度
-    edgeSize(10),                       // 圆角半径
-    titleHeight(22),                    // 标题高度
-    _padding(5.0),                      // 标题边距
-    _titleColor(Qt::white),
-    _titleFont(QFont("Consolas", 10)),
-    _penDefault(QPen(QColor(0x00, 0x00, 0x00, 0x7F))),
-    _penSelected(QPen(QColor(0xFF, 0xA6, 0x37, 0xFF))),
-    _brushTitle(QBrush(QColor(0x31, 0x31, 0x31, 0xFF))),
-    _brushBackGround(QBrush(QColor(0x12, 0x12, 0x12, 0xE3)))
+    wasMoved(false)
+{
+}
+
+QDMGraphicsNode* QDMGraphicsNode::init()
+{
+    this->initSize();
+    this->initAssets();
+    this->initUI();
+
+    return this;
+}
+
+void QDMGraphicsNode::initUI()
 {
     this->setFlag(QGraphicsItem::ItemIsSelectable);
     this->setFlag(QGraphicsItem::ItemIsMovable);
-    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);   // 可以通过 itemChange 监听移动和尺寸的变化
-
+    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);  // 可以通过 itemChange 监听移动和尺寸的变化
     // 初始化 title
     this->initTitle();
     this->title(this->node->title());
     // 初始化 content
     this->initContent();
+}
 
+void QDMGraphicsNode::initSize()
+{
+    this->width = 180;                         // 节点宽度
+    this->height = 240;                        // 节点高度
+    this->edgeSize = 10;                       // 圆角半径
+    this->titleHeight = 22;                    // 标题高度
+    this->_padding = 5.0;                      // 标题边距
+}
+
+void QDMGraphicsNode::initAssets()
+{
+    this->_titleColor = Qt::white;
+    this->_titleFont = QFont("Consolas", 10);
+    this->_penDefault = QPen(QColor(0x00, 0x00, 0x00, 0x7F));
+    this->_penSelected = QPen(QColor(0xFF, 0xA6, 0x37, 0xFF));
+    this->_brushTitle = QBrush(QColor(0x31, 0x31, 0x31, 0xFF));
+    this->_brushBackGround = QBrush(QColor(0x12, 0x12, 0x12, 0xE3));
 }
 
 QString QDMGraphicsNode::title() const
@@ -137,9 +155,10 @@ void QDMGraphicsNode::initTitle()
 void QDMGraphicsNode::initContent()
 {
     this->grContent = new QGraphicsProxyWidget(this);
-    this->content->setGeometry(this->edgeSize, this->titleHeight + this->edgeSize,
-                               this->width - 2*this->edgeSize, this->height - 2*this->edgeSize - this->titleHeight);
     this->grContent->setWidget(this->content);
+    this->content->setGeometry(this->edgeSize, this->titleHeight + this->edgeSize,
+                               this->width - 2 * this->edgeSize,
+                               this->height - 2 * this->edgeSize - this->titleHeight);
     this->grContent->setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 

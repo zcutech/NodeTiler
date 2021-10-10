@@ -105,7 +105,7 @@ void SceneClipboard::deserializeFromClipboard(json data)
 
     // 创建各个 node
     for (auto &nodeData : data["nodes"]) {
-        auto newNode = new Node(this->scene);
+        auto newNode = (new Node(this->scene))->init();
         newNode->deserialize(nodeData, &(this->scene->hashMap), false);
         // 调整新建node的位置
         auto pos = newNode->pos();

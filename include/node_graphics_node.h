@@ -18,8 +18,10 @@ class QDMGraphicsNode : public QGraphicsItem
 {
 public:
     friend Node;
+    // 必须在构造后先调用init方法
     explicit QDMGraphicsNode(Node* node, QGraphicsItem *parent = Q_NULLPTR);
     ~QDMGraphicsNode() override = default;
+    virtual QDMGraphicsNode* init();
     QString title() const;
     void title(const QString& t);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -36,6 +38,9 @@ protected:
     static qint64 lastDeSelNodeTime;      // 直接点击选择另一个node时，忽略取消选择事件
     void onSelected(bool mergeLastDeselection=false);
     void onDeselected();
+    virtual void initSize();
+    virtual void initAssets();
+    virtual void initUI();
     void initTitle();
     void initContent();
     QDMNodeContentWidget *content;

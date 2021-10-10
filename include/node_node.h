@@ -25,8 +25,9 @@ class Node : public Serializable {
 public:
     friend QDMGraphicsNode;
     friend Socket;
+    // 创建实例后必须先调用 init 方法
     explicit Node(Scene *_scene, const std::string& _title="Undefined Node",
-         const std::vector<SOCKET_TYPE>& inputs = {}, const std::vector<SOCKET_TYPE>& outputs ={});
+         std::vector<SOCKET_TYPE> inputs = {}, std::vector<SOCKET_TYPE> outputs = {});
     ~Node() = default;
     Scene *scene;
     QDMGraphicsNode *grNode;
@@ -34,11 +35,12 @@ public:
     SOCKET_POSITION outputSocketPos;
     std::vector<Socket*> inputs;
     std::vector<Socket*> outputs;
-    void initInnerClasses();
+    virtual Node* init();
+    virtual void initInnerClasses();
     void initSettings();
     // 创建输入和输出 sockets
-    void initSockets(const std::vector<SOCKET_TYPE>& _inputs,
-                     const std::vector<SOCKET_TYPE>& _outputs, bool resetAll=true);
+    void initSockets(std::vector<SOCKET_TYPE> _inputs,
+                     std::vector<SOCKET_TYPE> _outputs, bool resetAll=true);
     QPointF pos() const;
     void setPos(QPointF p);
     void setPos(float x, float y);
@@ -61,11 +63,11 @@ public:
     static void mergeWithIncrement(json& origSerial, json changeMap, json removeMap);
 
 protected:
-    const QString filePath = __FILE__;
-    const QString& getFilePath() const override { return this->filePath; }
     QDMNodeContentWidget *content;
     QString _title;
     size_t socketSpacing;
+    std::vector<SOCKET_TYPE> inTypeVec;
+    std::vector<SOCKET_TYPE> outTypeVec;
 };
 
 

@@ -265,7 +265,7 @@ bool Scene::deserialize(json data, node_HashMap *_hashMap=Q_NULLPTR, bool restor
 
     // 创建nodes
     for (auto &node_data : data["nodes"]) {
-        auto n = new Node(this);
+        auto n = (new Node(this))->init();
         n->deserialize(node_data, &(this->hashMap), restoreId);
     }
 
@@ -522,7 +522,7 @@ void Scene::deserializeIncremental(json changeMap, bool isUndo, node_HashMap *_h
     for (auto &node : changeMap["change"]["nodes"]) {
         // redo
         if (!node.contains("modified") && !isUndo) {
-            auto newNode = new Node(this);
+            auto newNode = (new Node(this))->init();
             newNode->deserialize(node, &(this->hashMap), true);
         } else {
             auto nodeObj = dynamic_cast<Node*>(this->hashMap[node["id"]]);
@@ -576,7 +576,7 @@ void Scene::deserializeIncremental(json changeMap, bool isUndo, node_HashMap *_h
             }
         } else {
             if (isUndo) {
-                auto newNode = new Node(this);
+                auto newNode = (new Node(this))->init();
                 newNode->deserialize(node, &(this->hashMap), true);
             } else {
                 auto nodeObj = dynamic_cast<Node*>(this->hashMap[node["id"]]);

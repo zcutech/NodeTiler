@@ -41,10 +41,6 @@ public:
                                       json& changeMap, json& removeMap) = 0;
     // 根据更改(及新增)和删除部分 `change_map` 还原或重建图形对象
     virtual void deserializeIncremental(json changeMap, bool isUndo, node_HashMap *hashMap) = 0;
-
-protected:
-    const QString filePath = __FILE__;           // 所在文件名，用于toString，方便调试
-    virtual const QString& getFilePath() const = 0;
 };
 
 #endif //NODETILER_NODE_SERIALIZABLE_H
