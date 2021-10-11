@@ -21,11 +21,12 @@ class Socket : public Serializable
 {
 public:
     explicit Socket(Node *node, size_t index=0, SOCKET_POSITION pos=SCT_AT_LEFT_TOP,
-           SOCKET_TYPE socket_type=SCT_TYPE_1);
+           SOCKET_TYPE socket_type=SCT_TYPE_1, size_t countOnThisNodeSide=1);
     ~Socket() = default;
     Node *node;
     std::vector<Wire*> wires;
     QDMGraphicsSocket *grSocket;
+    void setSocketPos() const;
     QPointF getSocketPos() const;
     void setAttachedWire(Wire *w=Q_NULLPTR);
     void delAttachedWire(Wire *w);
@@ -47,6 +48,7 @@ public:
 private:
     size_t index;
     SOCKET_TYPE socketType;
+    size_t countOnThisNodeSide;
 };
 
 #endif //NODETILER_NODE_SOCKET_H

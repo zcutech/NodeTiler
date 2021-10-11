@@ -22,6 +22,9 @@ class Node;
 class SceneHistory;
 class SceneClipboard;
 
+class Scene;
+typedef Node* (*NodeClassProxy)(Scene*);
+
 class Scene : public QObject, public Serializable
 {
     Q_OBJECT
@@ -34,6 +37,8 @@ public:
     node_HashMap hashMap;
     SceneHistory *history;
     SceneClipboard *clipboard;
+    // a callback function to retrieve node class
+    std::function<NodeClassProxy (json&)> nodeClsSelector;
     QList<QGraphicsItem*> getSelectedItems() const;
     bool hasBeenModified() const;
     void hasBeenModified(bool value);
@@ -42,13 +47,15 @@ public:
     void addItemDeselectedListener(const std::function<void()>& callback);
     void addDragEnterListener(const std::function<void(QDragEnterEvent *event)>& callback) const;
     void addDropListener(const std::function<void(QDropEvent *event)>& callback) const;
-    void addNode(Node*);
-    void addWire(Wire*);
+    void addNode(Node*, bool setToModified=true);
+    void addWire(Wire*, bool setToModified=true);
     void removeNode(Node*);
     void removeWire(Wire*);
     void clear(bool keepModified=false);
     bool saveToFile(const QString& filename, QString *saveMsg);
     bool loadFromFile(const QString& filename, QString *errMsg);
+    void setNodeClsSelector(NodeClassProxy (*clsSelectingFunc)(json&));
+    NodeClassProxy getNodeClsFromData(json& nodeData) const;
     json serialize() override;
     bool deserialize(json data, node_HashMap *_hashMap, bool restoreId) override;
     // 相对于 `original_serial`, 计算 `current_serial` 中的差异, 返回 增改和删除两项
@@ -76,5 +83,6 @@ private:
     std::vector<std::function<void()>> _itemSelectedListeners;
     std::vector<std::function<void()>> _itemDeselectedListeners;
 };
+
 
 #endif //NODETILER_NODE_SCENE_H

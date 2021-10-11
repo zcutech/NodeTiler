@@ -27,7 +27,7 @@ public:
     friend Socket;
     // 创建实例后必须先调用 init 方法
     explicit Node(Scene *_scene, const std::string& _title="Undefined Node",
-         std::vector<SOCKET_TYPE> inputs = {}, std::vector<SOCKET_TYPE> outputs = {});
+         std::vector<SOCKET_TYPE> inputs={}, std::vector<SOCKET_TYPE> outputs={});
     ~Node() = default;
     Scene *scene;
     QDMGraphicsNode *grNode;
@@ -35,7 +35,7 @@ public:
     SOCKET_POSITION outputSocketPos;
     std::vector<Socket*> inputs;
     std::vector<Socket*> outputs;
-    virtual Node* init();
+    virtual Node* init(bool fromHistory=false);
     virtual void initInnerClasses();
     void initSettings();
     // 创建输入和输出 sockets
@@ -47,7 +47,7 @@ public:
     QString title() const;
     void title(const std::string& _title);
     void removeSocket(Socket* s);
-    QPointF getSocketPos(int index, SOCKET_POSITION pos) const;
+    QPointF getSocketPos(int index, SOCKET_POSITION pos, size_t numOutOf = 1) const;
     void updateAttachedWires();
     void selectAttachedWires(bool revert=false);
     void setSelectedSilently(bool isSelected) const;

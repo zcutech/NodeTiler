@@ -31,7 +31,8 @@ Scene::Scene():
     _itemSelectedListeners({}),
     _itemDeselectedListeners({}),
     history(new SceneHistory(this)),
-    clipboard(new SceneClipboard(this))
+    clipboard(new SceneClipboard(this)),
+    nodeClsSelector(Q_NULLPTR)
 {
     this->grScene = new QDMGraphicsScene(this);
     this->grScene->setGrScene(this->sceneWidth, this->sceneHeight);
@@ -122,18 +123,22 @@ void Scene::addDropListener(const std::function<void(QDropEvent *event)> &callba
     view->addDropListener(callback);
 }
 
-void Scene::addNode(Node *node) {
+void Scene::addNode(Node *node, bool setToModified) {
     this->nodes.push_back(node);
     this->hashMap[node->id] = node;
     for (auto s : node->inputs)
         this->hashMap[s->id] = s;
     for (auto s : node->outputs)
         this->hashMap[s->id] = s;
+    if (setToModified)
+        this->hasBeenModified(true);
 }
 
-void Scene::addWire(Wire *wire) {
+void Scene::addWire(Wire *wire, bool setToModified) {
     this->wires.push_back(wire);
     this->hashMap[wire->id] = wire;
+    if (setToModified)
+        this->hasBeenModified(true);
 }
 
 void Scene::removeNode(Node *node) {
@@ -229,6 +234,20 @@ bool Scene::loadFromFile(const QString& filename, QString *errMsg)
     return true;
 }
 
+// when set a nodeClsSelector function, we can use different type of node
+void Scene::setNodeClsSelector(NodeClassProxy (*clsSelectingFunc)(json &))
+{
+    this->nodeClsSelector = clsSelectingFunc;
+}
+
+// return derived node class by the specified node serial data
+NodeClassProxy Scene::getNodeClsFromData(json& nodeData) const
+{
+    if (!this->nodeClsSelector)
+        return [](Scene* s) { return new Node(s); };
+    return this->nodeClsSelector(nodeData);
+}
+
 json Scene::serialize()
 {
     json _nodes = json::array(), _wires = json::array();
@@ -263,15 +282,16 @@ bool Scene::deserialize(json data, node_HashMap *_hashMap=Q_NULLPTR, bool restor
         this->id = data["id"];
     this->hashMap[this->id] = this;
 
-    // 创建nodes
-    for (auto &node_data : data["nodes"]) {
-        auto n = (new Node(this))->init();
-        n->deserialize(node_data, &(this->hashMap), restoreId);
+    // create nodes
+    for (auto &nodeData : data["nodes"]) {
+        auto nodeClass = this->getNodeClsFromData(nodeData);
+        auto n = (nodeClass(this))->init(true);
+        n->deserialize(nodeData, &(this->hashMap), restoreId);
     }
 
-    // 创建wires
+    // create wires
     for (auto &wire_data : data["wires"]) {
-        auto w = new Wire(this);
+        auto w = new Wire(this, Q_NULLPTR, Q_NULLPTR, WIRE_TYPE_BEZIER, true);
         w->deserialize(wire_data, &(this->hashMap), restoreId);
     }
 
@@ -519,74 +539,76 @@ void Scene::deserializeIncremental(json changeMap, bool isUndo, node_HashMap *_h
             this->sceneHeight = changeMap["scene_height"];
     }
 
-    for (auto &node : changeMap["change"]["nodes"]) {
+    for (auto &nodeData : changeMap["change"]["nodes"]) {
         // redo
-        if (!node.contains("modified") && !isUndo) {
-            auto newNode = (new Node(this))->init();
-            newNode->deserialize(node, &(this->hashMap), true);
+        if (!nodeData.contains("modified") && !isUndo) {
+            auto nodeClass = this->getNodeClsFromData(nodeData);
+            auto newNode = (nodeClass(this))->init(true);
+            newNode->deserialize(nodeData, &(this->hashMap), true);
         } else {
-            auto nodeObj = dynamic_cast<Node*>(this->hashMap[node["id"]]);
+            auto nodeObj = dynamic_cast<Node*>(this->hashMap[nodeData["id"]]);
             // undo
-            if (!node.contains("modified"))
+            if (!nodeData.contains("modified"))
                 nodeObj->remove();
             else
             {
                 std::cout << "nodeObj->deserializeIncremental" << std::endl;
                 // 已有node对象，重置状态
-                nodeObj->deserializeIncremental(node, isUndo, &(this->hashMap));
+                nodeObj->deserializeIncremental(nodeData, isUndo, &(this->hashMap));
             }
         }
     }
-    for (auto &wire : changeMap["change"]["wires"]) {
+    for (auto &wireData : changeMap["change"]["wires"]) {
         // redo
-        if (!wire.contains("modified") && !isUndo) {
-            auto newWire = new Wire(this);
-            newWire->deserialize(wire, &(this->hashMap), true);
+        if (!wireData.contains("modified") && !isUndo) {
+            auto newWire = new Wire(this, Q_NULLPTR, Q_NULLPTR, WIRE_TYPE_BEZIER, true);
+            newWire->deserialize(wireData, &(this->hashMap), true);
         } else {
-            auto wireObj = dynamic_cast<Wire*>(this->hashMap[wire["id"]]);
+            auto wireObj = dynamic_cast<Wire*>(this->hashMap[wireData["id"]]);
             // undo
-            if (!wire.contains("modified"))
+            if (!wireData.contains("modified"))
                 wireObj->remove();
             else
                 // 已有wire对象，重置状态
-                wireObj->deserializeIncremental(wire, isUndo, &(this->hashMap));
+                wireObj->deserializeIncremental(wireData, isUndo, &(this->hashMap));
         }
     }
 
-    for (auto &node : changeMap["remove"]["nodes"]) {
+    for (auto &nodeData : changeMap["remove"]["nodes"]) {
         // 删除的是node上的socket
-        if (!node.contains("title")) {
-            auto nodeObj = dynamic_cast<Node*>(this->hashMap[node["id"]]);
+        if (!nodeData.contains("title")) {
+            auto nodeObj = dynamic_cast<Node*>(this->hashMap[nodeData["id"]]);
             if (isUndo) {
-                for (auto &inputSocket : node["inputs"]) {
+                for (auto &inputSocket : nodeData["inputs"]) {
                     nodeObj->initSockets({inputSocket["socket_type"]}, {}, false);
                     auto &socketObj = nodeObj->inputs[0];
                     socketObj->deserialize(inputSocket, &(this->hashMap), true);
                 }
-                for (auto &outputSocket : node["outputs"]) {
+                for (auto &outputSocket : nodeData["outputs"]) {
                     nodeObj->initSockets({}, {outputSocket["socket_type"]}, false);
                     auto &socketObj = nodeObj->outputs[0];
                     socketObj->deserialize(outputSocket, &(this->hashMap), true);
                 }
             } else {
-                for (auto &inputSocket : node["inputs"])
+                for (auto &inputSocket : nodeData["inputs"])
                     nodeObj->removeSocket(dynamic_cast<Socket*>(this->hashMap[inputSocket["id"]]));
-                for (auto &outputSocket : node["outputs"])
+                for (auto &outputSocket : nodeData["outputs"])
                     nodeObj->removeSocket(dynamic_cast<Socket*>(this->hashMap[outputSocket["id"]]));
             }
         } else {
             if (isUndo) {
-                auto newNode = (new Node(this))->init();
-                newNode->deserialize(node, &(this->hashMap), true);
+                auto nodeClass = this->getNodeClsFromData(nodeData);
+                auto newNode = (nodeClass(this))->init(true);
+                newNode->deserialize(nodeData, &(this->hashMap), true);
             } else {
-                auto nodeObj = dynamic_cast<Node*>(this->hashMap[node["id"]]);
+                auto nodeObj = dynamic_cast<Node*>(this->hashMap[nodeData["id"]]);
                 nodeObj->remove();
             }
         }
     }
     for (auto &wire : changeMap["remove"]["wires"]) {
         if (isUndo) {
-            auto newWire = new Wire(this);
+            auto newWire = new Wire(this, Q_NULLPTR, Q_NULLPTR, WIRE_TYPE_BEZIER, true);
             newWire->deserialize(wire, &(this->hashMap), true);
         } else {
             // 可能随node一起被删除，需检查

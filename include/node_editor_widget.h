@@ -25,6 +25,8 @@ public:
     bool isFilenameSet() const;
     QList<QGraphicsItem*> getSelectedItems() const;
     bool hasSelectedItems() const;
+    bool canUndo() const;
+    bool canRedo() const;
     QString getUserFriendlyFilename() const;
     void fileNew();
     bool fileLoad(const QString& filename);
@@ -33,8 +35,6 @@ public:
     void add_debug_content();
 protected:
     QApplication *app;
-    bool canUndo() const;
-    bool canRedo() const;
 private:
     QVBoxLayout *layout;
 };

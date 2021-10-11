@@ -21,7 +21,7 @@ class Wire : public Serializable
 {
 public:
     explicit Wire(Scene *scene, Socket *startSocket=Q_NULLPTR, Socket *endSocket=Q_NULLPTR,
-         WIRE_TYPE wire_type=WIRE_TYPE_BEZIER);
+         WIRE_TYPE wire_type=WIRE_TYPE_BEZIER, bool fromHistory=false);
     ~Wire() = default;
     Scene *scene;
     Socket *outputSocket;

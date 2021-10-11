@@ -232,7 +232,7 @@ bool NodeEditorWindow::onFileSaveAs()
     auto getFileName = QFileDialog::getSaveFileName(this, "Save graph to file");
     if (getFileName == "")
         return false;
-    // 另存为新文件成功时，当前打开的即为此文件
+    // when success to save as a new file, the current opened file is this new file
     if (currentNodeEditor->fileSave(getFileName)) {
         this->statusBar()->showMessage("Successfully saved as " + currentNodeEditor->fileName, 5000);
         this->setTitle();

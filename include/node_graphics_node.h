@@ -50,9 +50,11 @@ protected:
     bool wasMoved;
     int width;
     int height;
-    float edgeSize;              // 圆角半径
-    int titleHeight;             // 标题高度
-    float _padding;              // 标题边距
+    float edgeRoundness;            // circle radius on the edges of a node
+    float edgePadding;
+    int titleHeight;
+    float titleHoriPad;             // padding between title and its box edge - horizontal
+    float titleVertPad;             // padding between title and its bxo edge - vertical
     QColor _titleColor;
     QFont _titleFont;
     QPen _penDefault;

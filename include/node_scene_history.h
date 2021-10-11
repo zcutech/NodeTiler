@@ -25,7 +25,7 @@ public:
     void undo();
     void redo();
     void addHistoryModifiedListener(const std::function<void()>& callback);
-    void restoreHistory(bool isUndo);
+    void restoreHistory(bool isUndo, int toStep=-1);
     void storeHistory(const QString& desc, VIEW_HIST::Flags opType,
                       bool setModified=false, bool mergeLast=false);
     json createHistoryStamp(const QString& desc, VIEW_HIST::Flags opType);

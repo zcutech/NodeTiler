@@ -13,7 +13,8 @@
 
 #include <iostream>
 
-Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_type):
+Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_type,
+           bool fromHistory):
     Serializable(),
     scene(scene),
     state(0),
@@ -30,7 +31,7 @@ Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_
 
     this->state |= WIRE_STATE::WIRE_STATE_OKAY;
 
-    this->scene->addWire(this);
+    this->scene->addWire(this, !fromHistory);
     this->wireType(wire_type);
     this->startSocket(startSocket);
     this->endSocket(endSocket);

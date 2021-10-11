@@ -19,7 +19,7 @@
 
 
 Node::Node(Scene *_scene, const std::string& _title,
-           std::vector<SOCKET_TYPE>  inputs, std::vector<SOCKET_TYPE>  outputs):
+           std::vector<SOCKET_TYPE>  inputs, std::vector<SOCKET_TYPE> outputs):
    Serializable(),
    scene(_scene),
    _title(QString::fromStdString(_title)),
@@ -35,7 +35,7 @@ Node::Node(Scene *_scene, const std::string& _title,
 {
 }
 
-Node* Node::init()
+Node* Node::init(bool fromHistory)
 {
     this->initSettings();
     this->initInnerClasses();
@@ -43,7 +43,7 @@ Node* Node::init()
 
     this->initSockets(this->inTypeVec, this->outTypeVec);
 
-    this->scene->addNode(this);
+    this->scene->addNode(this, !fromHistory);
     this->scene->grScene->addItem(this->grNode);
 
     return this;
@@ -53,13 +53,14 @@ void Node::initInnerClasses()
 {
     this->content = (new QDMNodeContentWidget(this))->init();
     this->grNode = (new QDMGraphicsNode(this))->init();
-    this->inputSocketPos = SCT_AT_LEFT_BOTTOM;
-    this->outputSocketPos = SCT_AT_RIGHT_TOP;
 }
 
 void Node::initSettings()
 {
     this->socketSpacing = 22;
+
+    this->inputSocketPos = SCT_AT_LEFT_BOTTOM;
+    this->outputSocketPos = SCT_AT_RIGHT_TOP;
 }
 
 // 创建输入和输出 sockets
@@ -78,13 +79,13 @@ void Node::initSockets(std::vector<SOCKET_TYPE> _inputs,
     }
     size_t counter = 0;
     for (auto i : _inputs) {
-        auto socket = new Socket(this, counter, this->inputSocketPos, i);
+        auto socket = new Socket(this, counter, this->inputSocketPos, i, !!_inputs.size());
         ++counter;
         this->inputs.push_back(socket);
     }
     counter = 0;
     for (auto i : _outputs) {
-        auto socket = new Socket(this, counter, this->outputSocketPos, i);
+        auto socket = new Socket(this, counter, this->outputSocketPos, i, !!_outputs.size());
         ++counter;
         this->outputs.push_back(socket);
     }
@@ -130,23 +131,37 @@ void Node::removeSocket(Socket *s)
     }
 }
 
-// 返回指定位置指定序号的socket对象的坐标
-// 返回 {x, y} 为socket相对于node的位置偏移
-QPointF Node::getSocketPos(int index, SOCKET_POSITION pos) const
+// get coordinate of Socket object from specified position and number
+// the return Point{x, y} is the offset coordinate of socket to its belonging node
+QPointF Node::getSocketPos(int index, SOCKET_POSITION pos, size_t numOutOf) const
 {
     qreal x, y;
-    if (pos == SCT_AT_LEFT_TOP || pos == SCT_AT_LEFT_BOTTOM) {
+    if (pos == SCT_AT_LEFT_TOP || pos == SCT_AT_LEFT_CENTER || pos == SCT_AT_LEFT_BOTTOM) {
         x = 0;
     } else {
         x = this->grNode->width;
     }
 
     if (pos == SCT_AT_LEFT_BOTTOM || pos == SCT_AT_RIGHT_BOTTOM) {
-        // 从底部开始
-        y = this->grNode->height - this->grNode->edgeSize - this->grNode->_padding - index * this->socketSpacing;
+        // start from bottom
+        y = this->grNode->height - this->grNode->edgeRoundness -
+                this->grNode->titleVertPad - index * this->socketSpacing;
+    } else if (pos == SCT_AT_LEFT_CENTER || pos == SCT_AT_RIGHT_CENTER) {
+        auto numSockets = numOutOf;
+        auto nodeHeight = this->grNode->height;
+        auto topOffset = this->grNode->titleHeight + 2 * this->grNode->titleVertPad +
+                this->grNode->edgePadding;
+        auto availableHeight = nodeHeight - topOffset;
+        auto totalHeightAllSockets = numSockets * this->socketSpacing;
+        y = topOffset + availableHeight / 2.0 + (index - 0.5) * this->socketSpacing;
+        if (numSockets > 1)
+            y -= this->socketSpacing * (numSockets - 1) / 2.0;
+    } else if (pos == SCT_AT_LEFT_TOP || pos == SCT_AT_RIGHT_TOP) {
+        // start from top
+        y = this->grNode->titleHeight + this->grNode->titleHoriPad +
+                this->grNode->edgeRoundness + index * this->socketSpacing;
     } else {
-        // 从顶部开始
-        y = this->grNode->titleHeight + this->grNode->_padding + this->grNode->edgeSize + index * this->socketSpacing;
+        y = 0;
     }
 
     return {x, y};
@@ -243,17 +258,20 @@ bool Node::deserialize(json data, node_HashMap *hashMap, bool restoreId=true)
     this->title(data["title"]);
     this->setPos(data["pos_x"], data["pos_y"]);
 
+    auto numInputs = data["inputs"].size();
+    auto numOutputs = data["outputs"].size();
+
     this->inputs.clear();
     for (auto &s_Data : data["inputs"]) {
         auto newSocket = new Socket(this, s_Data["index"], SOCKET_POSITION(s_Data["position"]),
-                                    SOCKET_TYPE(s_Data["socket_type"]));
+                                    SOCKET_TYPE(s_Data["socket_type"]), numInputs);
         newSocket->deserialize(s_Data, hashMap, restoreId);
         this->inputs.push_back(newSocket);
     }
     this->outputs.clear();
     for (auto &s_Data : data["outputs"]) {
         auto newSocket = new Socket(this, s_Data["index"], SOCKET_POSITION(s_Data["position"]),
-                                    SOCKET_TYPE(s_Data["socket_type"]));
+                                    SOCKET_TYPE(s_Data["socket_type"]), numOutputs);
         newSocket->deserialize(s_Data, hashMap, restoreId);
         this->outputs.push_back(newSocket);
     }
@@ -261,7 +279,10 @@ bool Node::deserialize(json data, node_HashMap *hashMap, bool restoreId=true)
     if (data.contains("selected"))
         this->setSelectedSilently(data["selected"]);
 
-    return true;
+    // deserialize the content of this node
+    auto deserializeOk = this->content->deserialize(data["content"], hashMap, restoreId);
+
+    return deserializeOk;
 }
 
 void Node::deserializeIncremental(json changeMap, bool isUndo, node_HashMap *hashMap)

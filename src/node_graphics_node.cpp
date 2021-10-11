@@ -49,11 +49,13 @@ void QDMGraphicsNode::initUI()
 
 void QDMGraphicsNode::initSize()
 {
-    this->width = 180;                         // 节点宽度
-    this->height = 240;                        // 节点高度
-    this->edgeSize = 10;                       // 圆角半径
-    this->titleHeight = 22;                    // 标题高度
-    this->_padding = 5.0;                      // 标题边距
+    this->width = 180;
+    this->height = 240;
+    this->edgeRoundness = 10;
+    this->edgePadding = 10.0;
+    this->titleHeight = 22;
+    this->titleHoriPad = 5.0;
+    this->titleVertPad = 5.0;
 }
 
 void QDMGraphicsNode::initAssets()
@@ -148,17 +150,17 @@ void QDMGraphicsNode::initTitle()
     this->title_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
     this->title_item->setDefaultTextColor(this->_titleColor);
     this->title_item->setFont(this->_titleFont);
-    this->title_item->setPos(this->_padding, 0);
-    this->title_item->setTextWidth(this->width - 2 * this->_padding);
+    this->title_item->setPos(this->titleHoriPad, 0);
+    this->title_item->setTextWidth(this->width - 2 * this->titleHoriPad);
 }
 
 void QDMGraphicsNode::initContent()
 {
     this->grContent = new QGraphicsProxyWidget(this);
     this->grContent->setWidget(this->content);
-    this->content->setGeometry(this->edgeSize, this->titleHeight + this->edgeSize,
-                               this->width - 2 * this->edgeSize,
-                               this->height - 2 * this->edgeSize - this->titleHeight);
+    this->content->setGeometry(this->edgePadding, this->titleHeight + this->edgePadding,
+                               this->width - 2 * this->edgePadding,
+                               this->height - 2 * this->edgePadding - this->titleHeight);
     this->grContent->setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 
@@ -170,30 +172,35 @@ void QDMGraphicsNode::selectAttachedWires(bool revert) const
 void QDMGraphicsNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                            QWidget *widget=Q_NULLPTR)
 {
-    // 标题
+    // paint title
     auto path_title = new QPainterPath();
     path_title->setFillRule(Qt::WindingFill);
-    path_title->addRoundedRect(0, 0, this->width, this->titleHeight, this->edgeSize, this->edgeSize);
-    path_title->addRect(0, this->titleHeight - this->edgeSize, this->edgeSize, this->edgeSize);
-    path_title->addRect(this->width - this->edgeSize, this->titleHeight - this->edgeSize, this->edgeSize, this->edgeSize);
+    path_title->addRoundedRect(0, 0, this->width, this->titleHeight,
+                               this->edgeRoundness, this->edgeRoundness);
+    path_title->addRect(0, this->titleHeight - this->edgeRoundness,
+                        this->edgeRoundness, this->edgeRoundness);
+    path_title->addRect(this->width - this->edgeRoundness, this->titleHeight - this->edgeRoundness,
+                        this->edgeRoundness, this->edgeRoundness);
     painter->setPen(Qt::NoPen);
     painter->setBrush(this->_brushTitle);
     painter->drawPath(path_title->simplified());
 
-    // 内容
+    // paint content
     auto path_content = new QPainterPath();
     path_content->setFillRule(Qt::WindingFill);
     path_content->addRoundedRect(0, this->titleHeight, this->width, this->height - this->titleHeight,
-                                 this->edgeSize, this->edgeSize);
-    path_content->addRect(0, this->titleHeight, this->edgeSize, this->edgeSize);
-    path_content->addRect(this->width - this->edgeSize, this->titleHeight, this->edgeSize, this->edgeSize);
+                                 this->edgeRoundness, this->edgeRoundness);
+    path_content->addRect(0, this->titleHeight, this->edgeRoundness, this->edgeRoundness);
+    path_content->addRect(this->width - this->edgeRoundness, this->titleHeight,
+                          this->edgeRoundness, this->edgeRoundness);
     painter->setPen(Qt::NoPen);
     painter->setBrush(this->_brushBackGround);
     painter->drawPath(path_content->simplified());
 
-    // 轮廓
+    // paint outline
     auto path_outline = new QPainterPath();
-    path_outline->addRoundedRect(0, 0, this->width, this->height, this->edgeSize, this->edgeSize);
+    path_outline->addRoundedRect(0, 0, this->width, this->height,
+                                 this->edgeRoundness, this->edgeRoundness);
     painter->setPen(!(this->isSelected()) ? this->_penDefault : this->_penSelected);
     painter->setBrush(Qt::NoBrush);
     painter->drawPath(path_outline->simplified());

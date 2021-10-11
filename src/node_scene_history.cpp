@@ -50,8 +50,8 @@ bool SceneHistory::canRedo() const
 void SceneHistory::undo()
 {
     if (this->canUndo()) {
-        this->restoreHistory(true);
         this->historyCurStep -= 1;
+        this->restoreHistory(true, this->historyCurStep + 1);
 
         auto isModified = false;
         if (this->historyCurStep > 0) {
@@ -93,10 +93,11 @@ void SceneHistory::addHistoryModifiedListener(const std::function<void()> &callb
     this->_historyModifiedListeners.push_back(callback);
 }
 
-void SceneHistory::restoreHistory(bool isUndo)
+void SceneHistory::restoreHistory(bool isUndo, int toStep)
 {
     std::cout << (isUndo ? " < UNDO " : " > REDO ") << std::endl;
-    this->restoreHistoryStamp(isUndo, this->historyStack[this->historyCurStep]);
+    auto step = (toStep == -1) ? this->historyCurStep : toStep;
+    this->restoreHistoryStamp(isUndo, this->historyStack[toStep]);
     for (const auto& callback : this->_historyModifiedListeners)
         callback();
 }
@@ -124,12 +125,14 @@ void SceneHistory::storeHistory(const QString& desc, VIEW_HIST::Flags opType,
 
     auto hs = this->createHistoryStamp(desc, opType);
 
-    if (!mergeLast) {
-        this->historyStack.append(hs);
-        this->historyCurStep += 1;
-    } else
+    // do not change the first history item
+    if (mergeLast && this->historyCurStep > 0) {
         this->historyStack[this->historyCurStep] = Scene::combineChangeMaps(
                 {this->historyStack[this->historyCurStep], hs});
+    } else {
+        this->historyStack.append(hs);
+        this->historyCurStep += 1;
+    }
 
     std::cout << "====================================================== ↓ store_history" << std::endl;
     std::cout << std::setw(4) << this->historyStack[this->historyCurStep] << std::endl;

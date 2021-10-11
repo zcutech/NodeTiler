@@ -12,20 +12,30 @@
 
 #include <iostream>
 
-Socket::Socket(Node *node, size_t index, SOCKET_POSITION pos, SOCKET_TYPE type):
+Socket::Socket(Node *node, size_t index, SOCKET_POSITION pos, SOCKET_TYPE type,
+               size_t countOnThisNodeSide):
     Serializable(),
     node(node),
     index(index),
     position(pos),
     socketType(type),
+    countOnThisNodeSide(countOnThisNodeSide),
     grSocket(Q_NULLPTR),
     wires({})
 {
     this->grSocket = new QDMGraphicsSocket(this, this->socketType);
-    this->grSocket->setPos(this->node->getSocketPos(this->index, this->position));
+
+    this->setSocketPos();
 }
 
-// 获取socket的绝对坐标位置
+void Socket::setSocketPos() const
+{
+    // use the relative position from its parent node
+    this->grSocket->setPos(this->node->getSocketPos(this->index, this->position,
+                                                    this->countOnThisNodeSide));
+}
+
+// get socket's absolute position coordinate
 QPointF Socket::getSocketPos() const
 {
     auto posToNode = this->node->getSocketPos(this->index, this->position);
@@ -76,7 +86,8 @@ void Socket::clearAllWires()
 
 bool Socket::isOutput() const
 {
-    return (this->position == SCT_AT_RIGHT_TOP || this->position == SCT_AT_RIGHT_BOTTOM);
+    return (this->position == SCT_AT_RIGHT_TOP || this->position == SCT_AT_RIGHT_CENTER
+            || this->position == SCT_AT_RIGHT_BOTTOM);
 }
 
 void Socket::remove()

@@ -103,11 +103,12 @@ void SceneClipboard::deserializeFromClipboard(json data)
     auto offsetX = mouseScenePos.x() - bboxCenterX;
     auto offsetY = mouseScenePos.y() - bboxCenterY;
 
-    // 创建各个 node
+    // create every nodes
     for (auto &nodeData : data["nodes"]) {
-        auto newNode = (new Node(this->scene))->init();
+        auto nodeClass = this->scene->getNodeClsFromData(nodeData);
+        auto newNode = (nodeClass(this->scene))->init();
         newNode->deserialize(nodeData, &(this->scene->hashMap), false);
-        // 调整新建node的位置
+        // adjust the position of new node
         auto pos = newNode->pos();
         // ToDo: a little bit bad of the pasted new Node position
         newNode->setPos(pos.x() + offsetX, pos.y() + offsetY);

@@ -40,9 +40,11 @@ extern easyMap grTypeName;
 // 端口方位
 enum SOCKET_POSITION {
     SCT_AT_LEFT_TOP = 1,
-    SCT_AT_LEFT_BOTTOM = 2,
-    SCT_AT_RIGHT_TOP = 3,
-    SCT_AT_RIGHT_BOTTOM = 4,
+    SCT_AT_LEFT_CENTER = 2,
+    SCT_AT_LEFT_BOTTOM = 3,
+    SCT_AT_RIGHT_TOP = 4,
+    SCT_AT_RIGHT_CENTER = 5,
+    SCT_AT_RIGHT_BOTTOM = 6,
 };
 // 端口类型
 enum SOCKET_TYPE {
