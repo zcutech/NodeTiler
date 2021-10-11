@@ -119,15 +119,25 @@ void Node::title(const std::string& t)
 
 void Node::removeSocket(Socket *s)
 {
-    auto foundI = std::find(this->inputs.begin(), this->inputs.end(), s);
-    if (foundI != this->inputs.end()) {
-        this->scene->grScene->removeItem(s->grSocket);
-        this->inputs.erase(foundI);
-    }
-    auto foundO = std::find(this->outputs.begin(), this->outputs.end(), s);
-    if (foundO != this->outputs.end()) {
-        this->scene->grScene->removeItem(s->grSocket);
-        this->outputs.erase(foundO);
+    if (s) {
+        auto foundI = std::find(this->inputs.begin(), this->inputs.end(), s);
+        if (foundI != this->inputs.end()) {
+            this->scene->grScene->removeItem(s->grSocket);
+            this->inputs.erase(foundI);
+        }
+        auto foundO = std::find(this->outputs.begin(), this->outputs.end(), s);
+        if (foundO != this->outputs.end()) {
+            this->scene->grScene->removeItem(s->grSocket);
+            this->outputs.erase(foundO);
+        }
+    } else {
+        // remove all sockets
+        for (auto &socket : this->inputs)
+            this->scene->grScene->removeItem(socket->grSocket);
+        this->inputs.clear();
+        for (auto &socket : this->outputs)
+            this->scene->grScene->removeItem(socket->grSocket);
+        this->outputs.clear();
     }
 }
 
@@ -204,20 +214,21 @@ void Node::setSelectedSilently(bool isSelected) const
 
 void Node::remove()
 {
-    // 从scene删除node
+    // remove this node element from scene's vector
     this->scene->removeNode(this);
-    // 从所有socket删除所有edge
+    // remove all wires from all sockets
     for (auto &socket : this->inputs) {
-        if (socket->hasWire())
+        if (socket->hasWire()) {
             socket->clearAllWires();
-        this->removeSocket(socket);
+        }
     }
     for (auto &socket : this->outputs) {
         if (socket->hasWire())
             socket->clearAllWires();
-        this->removeSocket(socket);
     }
-    // 删除gr_node
+    // remove all sockets of this node
+    this->removeSocket();
+    // remove this graphical node item from scene
     this->scene->grScene->removeItem(this->grNode);
     this->grNode = Q_NULLPTR;
 }

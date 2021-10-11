@@ -97,7 +97,7 @@ void SceneHistory::restoreHistory(bool isUndo, int toStep)
 {
     std::cout << (isUndo ? " < UNDO " : " > REDO ") << std::endl;
     auto step = (toStep == -1) ? this->historyCurStep : toStep;
-    this->restoreHistoryStamp(isUndo, this->historyStack[toStep]);
+    this->restoreHistoryStamp(isUndo, this->historyStack[step]);
     for (const auto& callback : this->_historyModifiedListeners)
         callback();
 }

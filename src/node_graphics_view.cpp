@@ -424,7 +424,7 @@ void QDMGraphicsView::leftMouseRelease(QMouseEvent *event)
                 this->_elementAction = VIEW_A_NOOP;
                 this->lastPressSocket = Q_NULLPTR;
                 this->_dragWireBeenHung = false;
-                this->wireDragEnd(grSocket);
+                this->wireDragEnd(grSocket, false, true);
             }
         }
         else if (this->_elementAction == VIEW_A_WIRE_BATCHING) {
@@ -752,14 +752,13 @@ void QDMGraphicsView::wireDragStart(QGraphicsItem *grItem, bool batch) {
     this->_socketDraggingWire->updatePositions();
 }
 
-void QDMGraphicsView::wireDragEnd(QGraphicsItem *grItem, bool batch)
+void QDMGraphicsView::wireDragEnd(QDMGraphicsSocket *grSocket, bool batch, bool afterTrans)
 {
     if (!batch)
         this->_elementAction = VIEW_A_NOOP;
 
-    if (grItem && grItem->type() == GRAPH_TYPE_SOCKET && this->_socketDraggingWire) {
-        auto item = qgraphicsitem_cast<QDMGraphicsSocket*>(grItem);
-        auto socket = item->socket;
+    if (grSocket && this->_socketDraggingWire) {
+        auto socket = grSocket->socket;
         if (this->_checkEndValid(this->_socketDraggingEvent)) {
             if (this->_socketDraggingWire->state & WIRE_STATE::WIRE_STATE_HEAD) {
                 this->_socketDraggingWire->endSocket(socket);
@@ -772,8 +771,8 @@ void QDMGraphicsView::wireDragEnd(QGraphicsItem *grItem, bool batch)
             this->_socketDraggingWire->updatePositions();
             if (!batch)
                 this->_socketDraggingWire = Q_NULLPTR;
-            this->grScene->scene->history->storeHistory("Create new wire by dragging",
-                                                        VIEW_HIST::CREATE_ITEMS, true);
+            auto desc = afterTrans? "Drag wire end to a new socket" : "Create new wire by dragging";
+            this->grScene->scene->history->storeHistory(desc, VIEW_HIST::CREATE_ITEMS, true);
             return;
         }
     }

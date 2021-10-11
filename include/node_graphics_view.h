@@ -13,6 +13,7 @@
 #include "node_common.h"
 
 class QDMGraphicsScene;
+class QDMGraphicsSocket;
 class QDMGraphicsWire;
 class QDMCutLine;
 class QDMGraphicsSelection;
@@ -77,7 +78,7 @@ private:
     bool itemIsMine(QGraphicsItem *grItem);
     bool _checkEndValid(QMouseEvent *event);
     void wireDragStart(QGraphicsItem *grItem, bool batch=false);
-    void wireDragEnd(QGraphicsItem *grItem, bool batch=false);
+    void wireDragEnd(QDMGraphicsSocket *grSocket, bool batch=false, bool afterTrans=false);
     void wireDragTrans(Socket *socket);
     bool lmbClickReleaseDistAway(QMouseEvent *event);
     void cutIntersectionWires();
