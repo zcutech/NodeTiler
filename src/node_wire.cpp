@@ -13,8 +13,7 @@
 
 #include <iostream>
 
-Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_type,
-           bool fromHistory):
+Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_type):
     Serializable(),
     scene(scene),
     state(0),
@@ -26,12 +25,12 @@ Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_
     inputSocket(Q_NULLPTR)
 {
     if (startSocket && endSocket && startSocket->node == endSocket->node) {
-        throw "不能链接同一个Node";
+        throw "A wire can't link on a same node";
     }
 
     this->state |= WIRE_STATE::WIRE_STATE_OKAY;
 
-    this->scene->addWire(this, !fromHistory);
+    this->scene->addWire(this);
     this->wireType(wire_type);
     this->startSocket(startSocket);
     this->endSocket(endSocket);
@@ -207,10 +206,14 @@ void Wire::deserializeIncremental(json changeMap, bool isUndo, node_HashMap *has
         this->wireType(WIRE_TYPE(changeMap["wire_type"][dataSelector]));
     if (changeMap.contains("start")) {
         auto startSocket = (*hashMap)[changeMap["start"][dataSelector]];
+        // detach from its original socket before set new socket
+        this->detachFromSockets(this->startSocket());
         this->startSocket(dynamic_cast<Socket*>(startSocket));
     }
     if (changeMap.contains("end")) {
         auto endSocket = (*hashMap)[changeMap["end"][dataSelector]];
+        // detach from its original socket before set new socket
+        this->detachFromSockets(this->endSocket());
         this->endSocket(dynamic_cast<Socket*>(endSocket));
     }
     if (changeMap.contains("selected")) {

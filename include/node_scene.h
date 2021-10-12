@@ -23,7 +23,7 @@ class SceneHistory;
 class SceneClipboard;
 
 class Scene;
-typedef Node* (*NodeClassProxy)(Scene*);
+using NodeClassProxy = std::function<Node* (Scene*)>;
 
 class Scene : public QObject, public Serializable
 {
@@ -47,14 +47,16 @@ public:
     void addItemDeselectedListener(const std::function<void()>& callback);
     void addDragEnterListener(const std::function<void(QDragEnterEvent *event)>& callback) const;
     void addDropListener(const std::function<void(QDropEvent *event)>& callback) const;
-    void addNode(Node*, bool setToModified=true);
-    void addWire(Wire*, bool setToModified=true);
+    void addNode(Node*);
+    void addWire(Wire*);
     void removeNode(Node*);
     void removeWire(Wire*);
     void clear(bool keepModified=false);
     bool saveToFile(const QString& filename, QString *saveMsg);
     bool loadFromFile(const QString& filename, QString *errMsg);
-    void setNodeClsSelector(NodeClassProxy (*clsSelectingFunc)(json&));
+    // set a callback function to retrieve node class, could be called by derived module
+    void setNodeClsSelector(std::function<NodeClassProxy (json&)> clsSelectingFunc);
+    // an agent method, maybe return different type of node class, or just the Node if no selector
     NodeClassProxy getNodeClsFromData(json& nodeData) const;
     json serialize() override;
     bool deserialize(json data, node_HashMap *_hashMap, bool restoreId) override;

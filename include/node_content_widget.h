@@ -20,7 +20,7 @@ class QDMNodeContentWidget : public QWidget, public Serializable
 {
     Q_OBJECT
 public:
-    // 必须在构造后先调用init方法
+    // must call init method firstly after construct
     explicit QDMNodeContentWidget(Node* node, QWidget *parent=Q_NULLPTR);
     ~QDMNodeContentWidget() override = default;
     virtual QDMNodeContentWidget* init();

@@ -25,7 +25,7 @@ class Node : public Serializable {
 public:
     friend QDMGraphicsNode;
     friend Socket;
-    // 创建实例后必须先调用 init 方法
+    // must call init method firstly after construction
     explicit Node(Scene *_scene, const std::string& _title="Undefined Node",
          std::vector<SOCKET_TYPE> inputs={}, std::vector<SOCKET_TYPE> outputs={});
     ~Node() = default;
@@ -35,10 +35,10 @@ public:
     SOCKET_POSITION outputSocketPos;
     std::vector<Socket*> inputs;
     std::vector<Socket*> outputs;
-    virtual Node* init(bool fromHistory=false);
+    virtual Node* init();
     virtual void initInnerClasses();
-    void initSettings();
-    // 创建输入和输出 sockets
+    virtual void initSettings();
+    // create input and output sockets
     void initSockets(std::vector<SOCKET_TYPE> _inputs,
                      std::vector<SOCKET_TYPE> _outputs, bool resetAll=true);
     QPointF pos() const;

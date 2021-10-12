@@ -49,7 +49,7 @@ json QDMNodeContentWidget::serialize()
 bool QDMNodeContentWidget::deserialize(json data, node_HashMap *hashMap=Q_NULLPTR,
                                        bool restoreId=true)
 {
-    return false;
+    return true;
 }
 
 QDMQTextEdit::QDMQTextEdit(QWidget *parent):

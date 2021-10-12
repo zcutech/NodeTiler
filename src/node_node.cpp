@@ -35,7 +35,9 @@ Node::Node(Scene *_scene, const std::string& _title,
 {
 }
 
-Node* Node::init(bool fromHistory)
+// when construct a node from history stack or local file,
+// don't invoke history store in the scene addNode method
+Node* Node::init()
 {
     this->initSettings();
     this->initInnerClasses();
@@ -43,7 +45,7 @@ Node* Node::init(bool fromHistory)
 
     this->initSockets(this->inTypeVec, this->outTypeVec);
 
-    this->scene->addNode(this, !fromHistory);
+    this->scene->addNode(this);
     this->scene->grScene->addItem(this->grNode);
 
     return this;
@@ -177,7 +179,7 @@ QPointF Node::getSocketPos(int index, SOCKET_POSITION pos, size_t numOutOf) cons
     return {x, y};
 }
 
-// 刷新节点socket上链接的wire，由mouseMove事件触发
+// update wires linked by the node's sockets, invoke by mouseMove event
 void Node::updateAttachedWires()
 {
     for (auto socket : this->inputs) {
