@@ -21,6 +21,7 @@ class Wire;
 class Node;
 class SceneHistory;
 class SceneClipboard;
+class QDMGraphicsView;
 
 class Scene;
 using NodeClassProxy = std::function<Node* (Scene*)>;
@@ -54,6 +55,7 @@ public:
     void clear(bool keepModified=false);
     bool saveToFile(const QString& filename, QString *saveMsg);
     bool loadFromFile(const QString& filename, QString *errMsg);
+    QDMGraphicsView* getView() const;
     // set a callback function to retrieve node class, could be called by derived module
     void setNodeClsSelector(std::function<NodeClassProxy (json&)> clsSelectingFunc);
     // an agent method, maybe return different type of node class, or just the Node if no selector

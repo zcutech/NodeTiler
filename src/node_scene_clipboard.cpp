@@ -67,10 +67,8 @@ json SceneClipboard::serializeSelected(bool deleteThem)
     });
 
     // 执行剪切时，删除所选
-    if (deleteThem) {
-        auto view = qobject_cast<QDMGraphicsView*>(this->scene->grScene->views()[0]);
-        view->deleteSelected("Cut out elements from scene");
-    }
+    if (deleteThem)
+        this->scene->getView()->deleteSelected("Cut out elements from scene");
 
     return data;
 }
@@ -81,8 +79,7 @@ void SceneClipboard::deserializeFromClipboard(json data)
     std::cout << std::setw(4) << data << std::endl;
 
     // 计算鼠标指针 - scene位置
-    auto view = qobject_cast<QDMGraphicsView*>(this->scene->grScene->views()[0]);
-    auto mouseScenePos = view->lastSceneMousePosition;
+    auto mouseScenePos = this->scene->getView()->lastSceneMousePosition;
 
     // 计算所选对象的 bounding box 和 center
     double minX = 0, maxX = 0, minY = 0, maxY = 0;

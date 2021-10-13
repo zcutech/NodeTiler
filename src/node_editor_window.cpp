@@ -297,9 +297,7 @@ void NodeEditorWindow::onEditPaste()
 
 void NodeEditorWindow::onEditDelete()
 {
-    auto nodeView = qobject_cast<QDMGraphicsView*>(
-            this->getCurrentNodeEditorWidget()->scene->grScene->views()[0]);
-    nodeView->deleteSelected();
+    this->getCurrentNodeEditorWidget()->scene->getView()->deleteSelected();
 }
 
 void NodeEditorWindow::readSettings()

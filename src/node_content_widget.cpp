@@ -33,8 +33,7 @@ QDMNodeContentWidget* QDMNodeContentWidget::init()
 }
 
 void QDMNodeContentWidget::setEditingFlag(int value) {
-    auto view = dynamic_cast<QDMGraphicsView*>(this->node->scene->grScene->views()[0]);
-    view->editingFlag = value;
+    this->node->scene->getView()->editingFlag = value;
 }
 
 json QDMNodeContentWidget::serialize()

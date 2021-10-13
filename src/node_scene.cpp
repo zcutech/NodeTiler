@@ -113,14 +113,12 @@ void Scene::addItemDeselectedListener(const std::function<void()> &callback)
 
 void Scene::addDragEnterListener(const std::function<void(QDragEnterEvent *event)> &callback) const
 {
-    auto view = qobject_cast<QDMGraphicsView*>(this->grScene->views()[0]);
-    view->addDragEnterListener(callback);
+    this->getView()->addDragEnterListener(callback);
 }
 
 void Scene::addDropListener(const std::function<void(QDropEvent *event)> &callback) const
 {
-    auto view = qobject_cast<QDMGraphicsView*>(this->grScene->views()[0]);
-    view->addDropListener(callback);
+    this->getView()->addDropListener(callback);
 }
 
 void Scene::addNode(Node *node) {
@@ -245,6 +243,11 @@ bool Scene::loadFromFile(const QString& filename, QString *errMsg)
     fp.close();
     *errMsg = "";
     return true;
+}
+
+QDMGraphicsView* Scene::getView() const
+{
+    return dynamic_cast<QDMGraphicsView*>(this->grScene->views()[0]);
 }
 
 // when set a nodeClsSelector function, we can use different type of node
