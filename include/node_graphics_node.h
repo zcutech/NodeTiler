@@ -18,7 +18,7 @@ class QDMGraphicsNode : public QGraphicsItem
 {
 public:
     friend Node;
-    // 必须在构造后先调用init方法
+    // // must call init method firstly after construct
     explicit QDMGraphicsNode(Node* node, QGraphicsItem *parent = Q_NULLPTR);
     ~QDMGraphicsNode() override = default;
     virtual QDMGraphicsNode* init();

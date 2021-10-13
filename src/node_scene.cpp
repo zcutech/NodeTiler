@@ -126,6 +126,7 @@ void Scene::addDropListener(const std::function<void(QDropEvent *event)> &callba
 void Scene::addNode(Node *node) {
     this->nodes.push_back(node);
     this->hashMap[node->id] = node;
+
     for (auto s : node->inputs)
         this->hashMap[s->id] = s;
     for (auto s : node->outputs)
@@ -257,6 +258,7 @@ void Scene::setNodeClsSelector(std::function<NodeClassProxy (json&)> clsSelectin
 NodeClassProxy Scene::getNodeClsFromData(json& nodeData) const
 {
     if (!this->nodeClsSelector)
+        // for code consistency, don't call init here
         return [](Scene* s) { return new Node(s); };
     return this->nodeClsSelector(nodeData);
 }

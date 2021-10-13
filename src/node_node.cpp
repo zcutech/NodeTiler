@@ -19,7 +19,7 @@
 
 
 Node::Node(Scene *_scene, const std::string& _title,
-           std::vector<SOCKET_TYPE>  inputs, std::vector<SOCKET_TYPE> outputs):
+           std::vector<SOCKET_TYPE> inputs, std::vector<SOCKET_TYPE> outputs):
    Serializable(),
    scene(_scene),
    _title(QString::fromStdString(_title)),
@@ -44,7 +44,6 @@ Node* Node::init()
     this->title(this->_title.toStdString());
 
     this->initSockets(this->inTypeVec, this->outTypeVec);
-
     this->scene->addNode(this);
     this->scene->grScene->addItem(this->grNode);
 
@@ -91,6 +90,32 @@ void Node::initSockets(std::vector<SOCKET_TYPE> _inputs,
         ++counter;
         this->outputs.push_back(socket);
     }
+}
+
+Socket* Node::findSocketIBySerial(json& socketSerial)
+{
+    for (auto &s : this->inputs) {
+        if (s->index == socketSerial["index"]
+            && s->position == socketSerial["position"]
+            && s->socketType == socketSerial["socket_type"]) {
+            return s;
+        }
+    }
+
+    return Q_NULLPTR;
+}
+
+Socket* Node::findSocketOBySerial(json& socketSerial)
+{
+    for (auto &s : this->outputs) {
+        if (s->index == socketSerial["index"]
+            && s->position == socketSerial["position"]
+            && s->socketType == socketSerial["socket_type"]) {
+            return s;
+        }
+    }
+
+    return Q_NULLPTR;
 }
 
 QPointF Node::pos() const
@@ -274,19 +299,28 @@ bool Node::deserialize(json data, node_HashMap *hashMap, bool restoreId=true)
     auto numInputs = data["inputs"].size();
     auto numOutputs = data["outputs"].size();
 
-    this->inputs.clear();
     for (auto &s_Data : data["inputs"]) {
-        auto newSocket = new Socket(this, s_Data["index"], SOCKET_POSITION(s_Data["position"]),
-                                    SOCKET_TYPE(s_Data["socket_type"]), numInputs);
-        newSocket->deserialize(s_Data, hashMap, restoreId);
-        this->inputs.push_back(newSocket);
+        auto existingSocket = this->findSocketIBySerial(s_Data);
+        if (existingSocket) {
+            existingSocket->deserialize(s_Data, hashMap, restoreId);
+        } else {
+            auto newSocket = new Socket(this, s_Data["index"], SOCKET_POSITION(s_Data["position"]),
+                                        SOCKET_TYPE(s_Data["socket_type"]), numInputs);
+            newSocket->deserialize(s_Data, hashMap, restoreId);
+            this->inputs.push_back(newSocket);
+        }
     }
-    this->outputs.clear();
+
     for (auto &s_Data : data["outputs"]) {
-        auto newSocket = new Socket(this, s_Data["index"], SOCKET_POSITION(s_Data["position"]),
-                                    SOCKET_TYPE(s_Data["socket_type"]), numOutputs);
-        newSocket->deserialize(s_Data, hashMap, restoreId);
-        this->outputs.push_back(newSocket);
+        auto existingSocket = this->findSocketOBySerial(s_Data);
+        if (existingSocket) {
+            existingSocket->deserialize(s_Data, hashMap, restoreId);
+        } else {
+            auto newSocket = new Socket(this, s_Data["index"], SOCKET_POSITION(s_Data["position"]),
+                                        SOCKET_TYPE(s_Data["socket_type"]), numOutputs);
+            newSocket->deserialize(s_Data, hashMap, restoreId);
+            this->outputs.push_back(newSocket);
+        }
     }
 
     if (data.contains("selected"))

@@ -41,6 +41,8 @@ public:
     // create input and output sockets
     void initSockets(std::vector<SOCKET_TYPE> _inputs,
                      std::vector<SOCKET_TYPE> _outputs, bool resetAll=true);
+    Socket* findSocketIBySerial(json &socketSerial);
+    Socket* findSocketOBySerial(json &socketSerial);
     QPointF pos() const;
     void setPos(QPointF p);
     void setPos(float x, float y);

@@ -24,6 +24,8 @@ public:
            SOCKET_TYPE socket_type=SCT_TYPE_1, size_t countOnThisNodeSide=1);
     ~Socket() = default;
     Node *node;
+    size_t index;
+    SOCKET_TYPE socketType;
     std::vector<Wire*> wires;
     QDMGraphicsSocket *grSocket;
     void setSocketPos() const;
@@ -46,8 +48,6 @@ public:
                                   json& changeMap, json& removeMap, json& foundSerial);
     static void mergeWithIncrement(json& origSerial, json changeMap, json removeMap);
 private:
-    size_t index;
-    SOCKET_TYPE socketType;
     size_t countOnThisNodeSide;
 };
 

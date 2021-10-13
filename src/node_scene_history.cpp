@@ -110,14 +110,12 @@ void SceneHistory::storeHistory(const QString& desc, VIEW_HIST::Flags opType,
 
     if (setModified)
         this->scene->hasBeenModified(true);
-
-    // 检查历史记录指针未在记录末尾
+    // check if the stack pointer is not at the end of stack
     if (this->historyCurStep + 1 < this->historyStack.size()) {
         this->historyStack = this->historyStack.mid(0, this->historyCurStep+1);
         this->tailSnapshot = this->compositeHistoryStamp();
     }
-
-    // 检查历史记录超过最大限制
+    // check if current history stack length beyond limit
     if (this->historyCurStep + 1 >= this->historyLimit) {
         this->historyStack = this->historyStack.mid(1);
         this->historyCurStep -= 1;
