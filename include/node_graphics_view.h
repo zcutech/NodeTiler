@@ -73,9 +73,6 @@ private:
 
     void paintSelection(QMouseEvent *event);
     QGraphicsItem* itemAtClick(QMouseEvent *event);
-    QGraphicsItem* isClickingOn(QPoint pos, GRAPHICS_TYPE theType);
-    bool isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType);
-    bool itemIsMine(QGraphicsItem *grItem);
     bool _checkEndValid(QMouseEvent *event);
     void wireDragStart(QGraphicsItem *grItem, bool batch=false);
     void wireDragEnd(QDMGraphicsSocket *grSocket, bool batch=false, bool afterTrans=false);

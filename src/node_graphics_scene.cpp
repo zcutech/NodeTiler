@@ -4,6 +4,11 @@
 
 #include <QVector>
 
+#include "node_scene.h"
+#include "node_socket.h"
+#include "node_graphics_node.h"
+#include <node_graphics_socket.h>
+
 #include "node_graphics_scene.h"
 
 
@@ -68,4 +73,49 @@ void QDMGraphicsScene::drawBackground(QPainter *painter, const QRectF &rect)
 // 不允许drag事件，除非重写dragMoveEvent
 void QDMGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
 //    QGraphicsScene::dragMoveEvent(event);
+}
+
+// if the items stack in the clicking position contains the specified type object
+QGraphicsItem* QDMGraphicsScene::isClickingOn(QPointF pos, GRAPHICS_TYPE theType)
+{
+    QList<QGraphicsItem *> items = this->items(pos);
+    for (auto i = items.rbegin(); i != items.rend(); ++i) {
+        if ((*i) && (*i)->type() == theType)
+            return *i;
+    }
+    return Q_NULLPTR;
+}
+
+// if the specified object item is the specified type
+bool QDMGraphicsScene::isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType)
+{
+    if (item && item->type() == theType)
+        return true;
+    return false;
+}
+
+// if the graphic item is one of our interests object(can be moved and selected)
+bool QDMGraphicsScene::itemIsMine(QGraphicsItem *grItem) {
+    if (grItem == Q_NULLPTR)
+        return false;
+    switch (grItem->type()) {
+        case GRAPH_TYPE_NODE:
+        case GRAPH_TYPE_SOCKET:
+        case GRAPH_TYPE_WIRE:
+            return true;
+        default:
+            break;
+    }
+    return false;
+}
+
+Node *QDMGraphicsScene::getNodeByGraphicItem(QGraphicsItem *item) const {
+    if (this->scene->grScene->isClickingOn(item->pos(), GRAPH_TYPE_NODE)) {
+        auto grNode = qgraphicsitem_cast<QDMGraphicsNode*>(item);
+        return grNode->node;
+    } else if (this->scene->grScene->isClickingOn(item->pos(), GRAPH_TYPE_SOCKET)) {
+        auto grSocket = qgraphicsitem_cast<QDMGraphicsSocket*>(item);
+        return grSocket->socket->node;
+    }
+    return nullptr;
 }

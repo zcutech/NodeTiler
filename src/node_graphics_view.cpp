@@ -2,10 +2,12 @@
 // Created by Charlie Zhong on 2021/9/6.
 //
 
-#include "node_graphics_view.h"
 
 #include <cmath>
+
 #include <QtWidgets>
+
+#include "node_graphics_view.h"
 
 #include "node_graphics_wire.h"
 #include "node_graphics_socket.h"
@@ -13,14 +15,12 @@
 #include "node_graphics_cutline.h"
 #include "node_graphics_selection.h"
 #include "node_graphics_node.h"
-
 #include "node_wire.h"
 #include "node_socket.h"
 #include "node_node.h"
 #include "node_scene.h"
 #include "node_scene_history.h"
 
-#include <iostream>
 
 QDMGraphicsView::QDMGraphicsView(QDMGraphicsScene *_grScene, QWidget *parent):
         QGraphicsView(parent),
@@ -257,7 +257,8 @@ void QDMGraphicsView::leftMousePress(QMouseEvent *event)
     }
 
     /* =========================   画选区或点节点或者连线   ======================== */
-    if (!item || (item->type() != GRAPH_TYPE_SOCKET && this->isClickingOn(event->pos(), GRAPH_TYPE_NODE))
+    if (!item || (item->type() != GRAPH_TYPE_SOCKET
+        && this->grScene->isClickingOn(event->pos(), GRAPH_TYPE_NODE))
         || item->type() == GRAPH_TYPE_WIRE) {
         // 点选和画选时Shift等效Ctrl
         if (withShift) {
@@ -267,7 +268,7 @@ void QDMGraphicsView::leftMousePress(QMouseEvent *event)
                                              event->modifiers() | Qt::ControlModifier);
             QGraphicsView::mousePressEvent(fakeEvent);
             // 按住Shift选择node时，同时选中其wires
-            if (auto _node = this->isClickingOn(event->pos(), GRAPH_TYPE_NODE)) {
+            if (auto _node = this->grScene->isClickingOn(event->pos(), GRAPH_TYPE_NODE)) {
                 auto grNode = qgraphicsitem_cast<QDMGraphicsNode*>(_node);
                 grNode->selectAttachedWires(true);
             }
@@ -376,8 +377,8 @@ void QDMGraphicsView::leftMouseRelease(QMouseEvent *event)
     auto withAlt = bool(event->modifiers() & Qt::AltModifier);
 
     /* =======================   释放鼠标左键，清除选区对象   ===================== */
-    if (this->_viewSelectingGr && this->_viewSelectingGr->isVisible() &&
-        this->_elementAction == VIEW_A_NOOP) {
+    if (this->_viewSelectingGr && this->_viewSelectingGr->isVisible()
+        && this->_elementAction == VIEW_A_NOOP) {
         // 恢复自定义选择器状态
         this->_viewSelectingGr->hide();
         this->grScene->isSelecting = false;
@@ -394,7 +395,8 @@ void QDMGraphicsView::leftMouseRelease(QMouseEvent *event)
     }
 
     /* ===========================   点击节点或者连线   ========================== */
-    if (this->isClickingOn(event->pos(), GRAPH_TYPE_NODE) || (item && item->type() == GRAPH_TYPE_WIRE)
+    if (this->grScene->isClickingOn(event->pos(), GRAPH_TYPE_NODE)
+        || (item && item->type() == GRAPH_TYPE_WIRE)
         || !item) {
         // 点选和画选时Shift等效Ctrl
         if (withShift && this->_elementAction == VIEW_A_NOOP) {
@@ -638,47 +640,13 @@ void QDMGraphicsView::deleteSelected(const QString& cutDesc)
         this->grScene->scene->history->storeHistory("Delete selected", VIEW_HIST::DELETE_ITEMS, true);
 }
 
-// 返回鼠标点击处的对象
+// return the object item on the position of mouse clicking
 QGraphicsItem* QDMGraphicsView::itemAtClick(QMouseEvent *event)
 {
     auto pos = event->pos();
     auto obj = this->itemAt(pos);
     // 所在位置不是QGraphicsItem类型对象时，返回空指针
     return obj;
-}
-
-// 判断点击处是否有指定类型对象
-QGraphicsItem* QDMGraphicsView::isClickingOn(QPoint pos, GRAPHICS_TYPE theType)
-{
-    QList<QGraphicsItem *> items = this->items(pos);
-    for (auto i = items.rbegin(); i != items.rend(); ++i) {
-        if ((*i) && (*i)->type() == theType)
-            return *i;
-    }
-    return Q_NULLPTR;
-}
-
-// 判断传入对象是否为指定类型对象
-bool QDMGraphicsView::isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType)
-{
-    if (item && item->type() == theType)
-        return true;
-    return false;
-}
-
-// 是否为可目标可选中和移动的对象（子类化图元及其子图元）
-bool QDMGraphicsView::itemIsMine(QGraphicsItem *grItem) {
-    if (grItem == Q_NULLPTR)
-        return false;
-    switch (grItem->type()) {
-        case GRAPH_TYPE_NODE:
-        case GRAPH_TYPE_SOCKET:
-        case GRAPH_TYPE_WIRE:
-            return true;
-        default:
-            break;
-    }
-    return false;
 }
 
 // 检查和确保wire终点有效

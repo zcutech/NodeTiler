@@ -9,8 +9,10 @@
 #include <QtWidgets>
 #include <QtGui>
 
-class Scene;
+#include "node_common.h"
 
+class Scene;
+class Node;
 
 class QDMGraphicsScene : public QGraphicsScene
 {
@@ -18,11 +20,15 @@ class QDMGraphicsScene : public QGraphicsScene
 public:
     explicit QDMGraphicsScene(Scene *_scene, QObject *parent = Q_NULLPTR);
     ~QDMGraphicsScene() override = default;
+    Scene *scene;
+    bool isSelecting;               // 划选区时由view设置为true
     void setGrScene(int width, int height);
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
-    Scene *scene;
-    bool isSelecting;               // 划选区时由view设置为true
+    QGraphicsItem* isClickingOn(QPointF pos, GRAPHICS_TYPE theType);
+    bool isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType);
+    bool itemIsMine(QGraphicsItem *grItem);
+    Node* getNodeByGraphicItem(QGraphicsItem* item) const;
 signals:
     void itemSelected(bool mergeLast);
     void itemDeselected();
