@@ -31,12 +31,12 @@ Node::Node(Scene *_scene, const std::string& _title,
    inputs({}),
    outputs({}),
    inTypeVec(std::move(inputs)),
-   outTypeVec(std::move(outputs))
+   outTypeVec(std::move(outputs)),
+   _isDirty(false),
+   _isInvalid(false)
 {
 }
 
-// when construct a node from history stack or local file,
-// don't invoke history store in the scene addNode method
 Node* Node::init()
 {
     this->initSettings();
@@ -260,6 +260,102 @@ void Node::remove()
     this->grNode = Q_NULLPTR;
 }
 
+/* ---------------------- node evaluation functions ------------------------ */
+bool Node::isDirty() const
+{
+    return this->_isDirty;
+}
+
+void Node::markDirty(bool newVal)
+{
+    this->_isDirty = newVal;
+    if (this->_isDirty)
+        this->onMarkedDirty();
+}
+
+void Node::onMarkedDirty()
+{
+
+}
+
+void Node::markChildDirty(bool newVal)
+{
+    for (const auto &otherNode : this->getChildrenNodes()) {
+        otherNode->markDirty(newVal);
+    }
+}
+
+void Node::markDescendantDirty(bool newVal)
+{
+    for (const auto &otherNode : this->getChildrenNodes()) {
+        otherNode->markDirty(newVal);
+        otherNode->markChildDirty(newVal);
+    }
+}
+
+bool Node::isInvalid() const
+{
+    return this->_isInvalid;
+}
+
+void Node::markInvalid(bool newVal)
+{
+    this->_isInvalid = newVal;
+    if (this->_isInvalid)
+        this->onMarkedInvalid();
+}
+
+void Node::onMarkedInvalid()
+{
+
+}
+
+void Node::markChildInvalid(bool newVal)
+{
+    for (const auto &otherNode : this->getChildrenNodes()) {
+        otherNode->markInvalid(newVal);
+    }
+}
+
+void Node::markDescendantInvalid(bool newVal)
+{
+    for (const auto &otherNode : this->getChildrenNodes()) {
+        otherNode->markInvalid(newVal);
+        otherNode->markChildInvalid(newVal);
+    }
+}
+
+void Node::eval()
+{
+    this->markDirty(false);
+    this->markInvalid(false);
+}
+
+void Node::evalChildren()
+{
+    for (const auto &node : this->getChildrenNodes())
+        node->eval();
+}
+
+/* ---------------------- traversing nodes functions ----------------------- */
+std::vector<Node*> Node::getChildrenNodes()
+{
+    std::vector<Node*> otherNodes{};
+
+    if (this->outputs.empty())
+        return otherNodes;
+
+    for (const auto &outputSocket : this->outputs) {
+        for (const auto &wire : outputSocket->wires) {
+            auto otherNode = wire->inputSocket->node;
+            otherNodes.push_back(otherNode);
+        }
+    }
+
+    return otherNodes;
+}
+
+/* ------------- serialization and deserialization functions --------------- */
 json Node::serialize()
 {
     json inputs_S = json::array(), outputs_S = json::array();
@@ -380,6 +476,8 @@ void Node::deserializeIncremental(json changeMap, bool isUndo, node_HashMap *has
 
     this->updateAttachedWires();
 }
+
+/* ------------------ serial compare and merge functions ------------------- */
 
 // 在指定序列组中查找和比较与指定的另一个序列的差异，返回更改和删除部分
 void Node::extractSerialDiff(json anotherSerial, json myArray,

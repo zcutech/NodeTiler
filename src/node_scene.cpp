@@ -3,6 +3,8 @@
 //
 
 #include <algorithm>
+#include <iostream>
+#include <iomanip>
 
 #include "node_scene.h"
 
@@ -14,8 +16,6 @@
 #include "node_scene_clipboard.h"
 #include "node_graphics_view.h"
 
-#include <iostream>
-#include <iomanip>
 
 Scene::Scene():
     Serializable(),
@@ -248,6 +248,11 @@ bool Scene::loadFromFile(const QString& filename, QString *errMsg)
 QDMGraphicsView* Scene::getView() const
 {
     return dynamic_cast<QDMGraphicsView*>(this->grScene->views()[0]);
+}
+
+QGraphicsItem* Scene::getItemAt(QPoint p) const
+{
+    return this->getView()->itemAt(p);
 }
 
 // when set a nodeClsSelector function, we can use different type of node

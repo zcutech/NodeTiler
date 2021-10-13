@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+
 #include <QtCore>
 
 #include "node_common.h"
@@ -54,6 +55,19 @@ public:
     void selectAttachedWires(bool revert=false);
     void setSelectedSilently(bool isSelected) const;
     void remove();
+    bool isDirty() const;
+    void markDirty(bool newVal=true);
+    void onMarkedDirty();
+    void markChildDirty(bool newVal=true);
+    void markDescendantDirty(bool newVal=true);
+    bool isInvalid() const;
+    void markInvalid(bool newVal=true);
+    void onMarkedInvalid();
+    void markChildInvalid(bool newVal=true);
+    void markDescendantInvalid(bool newVal=true);
+    void eval();
+    void evalChildren();
+    std::vector<Node*> getChildrenNodes();
     json serialize() override;
     bool deserialize(json data, node_HashMap *hashMap, bool restoreId) override;
     void serializeIncremental(json currentSerial, json originalSerial,
@@ -70,6 +84,10 @@ protected:
     size_t socketSpacing;
     std::vector<SOCKET_TYPE> inTypeVec;
     std::vector<SOCKET_TYPE> outTypeVec;
+
+private:
+    bool _isDirty;
+    bool _isInvalid;
 };
 
 
