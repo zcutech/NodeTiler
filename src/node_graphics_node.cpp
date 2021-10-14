@@ -4,13 +4,13 @@
 
 #include "node_graphics_node.h"
 
+#include <iostream>
+
 #include "node_node.h"
 #include "node_scene.h"
 #include "node_content_widget.h"
 #include "node_scene_history.h"
 #include "node_graphics_scene.h"
-
-#include <iostream>
 
 
 qint64 QDMGraphicsNode::lastDeSelNodeTime = 0;

@@ -4,6 +4,7 @@
 
 #include "node_graphics_cutline.h"
 
+
 QDMCutLine::QDMCutLine(QGraphicsItem *parent):
     QGraphicsItem(parent),
     linePoints({}),

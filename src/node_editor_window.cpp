@@ -4,14 +4,14 @@
 
 #include "node_editor_window.h"
 
+#include <iostream>
+
 #include "node_editor_widget.h"
 #include "node_scene.h"
 #include "node_graphics_scene.h"
 #include "node_graphics_view.h"
 #include "node_scene_history.h"
 #include "node_scene_clipboard.h"
-
-#include <iostream>
 
 
 NodeEditorWindow::NodeEditorWindow(QApplication *app):

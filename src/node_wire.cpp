@@ -2,16 +2,17 @@
 // Created by Charlie Zhong on 2021/9/11.
 //
 
-#include  <QtCore>
-
 #include "node_wire.h"
+
+#include <iostream>
+
+#include  <QtCore>
 
 #include "node_scene.h"
 #include "node_socket.h"
 #include "node_graphics_wire.h"
 #include "node_graphics_scene.h"
 
-#include <iostream>
 
 Wire::Wire(Scene *scene, Socket *startSocket, Socket *endSocket, WIRE_TYPE wire_type):
     Serializable(),

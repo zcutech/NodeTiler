@@ -2,9 +2,9 @@
 // Created by Charlie Zhong on 2021/9/6.
 //
 
-#include <QColor>
-
 #include "node_editor_widget.h"
+
+#include <QColor>
 
 #include "node_common.h"
 #include "node_node.h"

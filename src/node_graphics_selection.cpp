@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+
 QDMGraphicsSelection::QDMGraphicsSelection(QPointF pos, float width, float height):
     pos(pos),
     width(width),

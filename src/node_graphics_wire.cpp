@@ -3,6 +3,7 @@
 //
 
 #include <cmath>
+#include <iostream>
 
 #include "node_graphics_wire.h"
 #include "node_wire.h"
@@ -10,7 +11,6 @@
 #include "node_socket.h"
 #include "node_graphics_scene.h"
 
-#include <iostream>
 
 qint64 QDMGraphicsWire::lastReleaseWireTime = 0;
 

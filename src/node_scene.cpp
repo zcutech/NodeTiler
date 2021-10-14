@@ -2,11 +2,11 @@
 // Created by Charlie Zhong on 2021/9/6.
 //
 
+#include "node_scene.h"
+
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-
-#include "node_scene.h"
 
 #include "node_node.h"
 #include "node_wire.h"

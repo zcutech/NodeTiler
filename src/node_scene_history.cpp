@@ -4,6 +4,10 @@
 
 #include "node_scene_history.h"
 
+#include <iostream>
+#include <iomanip>
+#include <utility>
+
 #include "node_graphics_scene.h"
 #include "node_graphics_node.h"
 #include "node_graphics_wire.h"
@@ -11,9 +15,6 @@
 #include "node_node.h"
 #include "node_wire.h"
 
-#include <iostream>
-#include <iomanip>
-#include <utility>
 
 SceneHistory::SceneHistory(Scene *scene):
     scene(scene),

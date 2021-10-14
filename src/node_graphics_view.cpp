@@ -2,12 +2,11 @@
 // Created by Charlie Zhong on 2021/9/6.
 //
 
+#include "node_graphics_view.h"
 
 #include <cmath>
 
 #include <QtWidgets>
-
-#include "node_graphics_view.h"
 
 #include "node_graphics_wire.h"
 #include "node_graphics_socket.h"

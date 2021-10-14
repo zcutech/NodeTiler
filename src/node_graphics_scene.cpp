@@ -2,14 +2,12 @@
 // Created by Charlie Zhong on 2021/9/6.
 //
 
-#include <QVector>
+#include "node_graphics_scene.h"
 
 #include "node_scene.h"
 #include "node_socket.h"
 #include "node_graphics_node.h"
-#include <node_graphics_socket.h>
-
-#include "node_graphics_scene.h"
+#include "node_graphics_socket.h"
 
 
 QDMGraphicsScene::QDMGraphicsScene(Scene *_scene, QObject *parent):

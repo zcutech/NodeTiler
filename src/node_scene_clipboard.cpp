@@ -2,6 +2,9 @@
 // Created by Charlie Zhong on 2021/9/25.
 //
 
+#include <iostream>
+#include <iomanip>
+
 #include <QtGui>
 
 #include "node_scene_clipboard.h"
@@ -14,9 +17,6 @@
 #include "node_wire.h"
 #include "node_socket.h"
 #include "node_scene.h"
-
-#include <iostream>
-#include <iomanip>
 
 
 SceneClipboard::SceneClipboard(Scene *scene):

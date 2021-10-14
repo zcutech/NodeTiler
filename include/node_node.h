@@ -65,7 +65,7 @@ public:
     void onMarkedInvalid();
     void markChildInvalid(bool newVal=true);
     void markDescendantInvalid(bool newVal=true);
-    void eval();
+    int eval();
     void evalChildren();
     std::vector<Node*> getChildrenNodes();
     json serialize() override;

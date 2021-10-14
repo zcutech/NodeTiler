@@ -4,13 +4,14 @@
 
 #include "node_socket.h"
 
+#include <iostream>
+
 #include "node_graphics_socket.h"
 #include "node_graphics_scene.h"
 #include "node_scene.h"
 #include "node_node.h"
 #include "node_wire.h"
 
-#include <iostream>
 
 Socket::Socket(Node *node, size_t index, SOCKET_POSITION pos, SOCKET_TYPE type,
                size_t countOnThisNodeSide):
