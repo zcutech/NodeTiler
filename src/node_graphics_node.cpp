@@ -128,7 +128,7 @@ void QDMGraphicsNode::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
 
-    if (this->wasMoved) {
+    if (event->button() == Qt::LeftButton && this->wasMoved) {
         this->wasMoved = false;
         this->node->scene->history->storeHistory("Node Moved", VIEW_HIST::MOVE_ITEMS, true);
     }
