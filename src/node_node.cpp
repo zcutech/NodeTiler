@@ -328,6 +328,8 @@ int Node::eval()
 {
     this->markDirty(false);
     this->markInvalid(false);
+
+    return 0;
 }
 
 void Node::evalChildren()

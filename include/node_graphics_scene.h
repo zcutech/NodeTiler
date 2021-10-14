@@ -26,9 +26,9 @@ public:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
     QGraphicsItem* isClickingOn(QPointF pos, GRAPHICS_TYPE theType);
-    bool isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType);
+    bool isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType) const;
     bool itemIsMine(QGraphicsItem *grItem);
-    Node* getNodeByGraphicItem(QGraphicsItem* item) const;
+    Node* getNodeByItemPos(QGraphicsItem* item, QPointF pos) const;
 signals:
     void itemSelected(bool mergeLast);
     void itemDeselected();

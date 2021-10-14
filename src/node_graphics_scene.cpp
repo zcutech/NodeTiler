@@ -7,7 +7,9 @@
 #include "node_scene.h"
 #include "node_socket.h"
 #include "node_graphics_node.h"
+#include "node_content_widget.h"
 #include "node_graphics_socket.h"
+#include "node_graphics_view.h"
 
 
 QDMGraphicsScene::QDMGraphicsScene(Scene *_scene, QObject *parent):
@@ -73,20 +75,23 @@ void QDMGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
 //    QGraphicsScene::dragMoveEvent(event);
 }
 
+#include <iostream>
+
 // if the items stack in the clicking position contains the specified type object
 QGraphicsItem* QDMGraphicsScene::isClickingOn(QPointF pos, GRAPHICS_TYPE theType)
 {
     QList<QGraphicsItem *> items = this->items(pos);
+    std::cout << "QDMGraphicsScene::isClickingOn - 1 , items size: " << items.size() << std::endl;
     for (auto i = items.rbegin(); i != items.rend(); ++i) {
-        if ((*i) && (*i)->type() == theType)
+        std::cout << "QDMGraphicsScene::isClickingOn - 2 , items type: " << (*i)->type() << std::endl;
+        if (this->isTypeOf(*i, theType))
             return *i;
     }
     return Q_NULLPTR;
 }
 
 // if the specified object item is the specified type
-bool QDMGraphicsScene::isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType)
-{
+bool QDMGraphicsScene::isTypeOf(QGraphicsItem *item, GRAPHICS_TYPE theType) const {
     if (item && item->type() == theType)
         return true;
     return false;
@@ -107,12 +112,15 @@ bool QDMGraphicsScene::itemIsMine(QGraphicsItem *grItem) {
     return false;
 }
 
-Node *QDMGraphicsScene::getNodeByGraphicItem(QGraphicsItem *item) const {
-    if (this->scene->grScene->isClickingOn(item->pos(), GRAPH_TYPE_NODE)) {
-        auto grNode = qgraphicsitem_cast<QDMGraphicsNode*>(item);
+Node* QDMGraphicsScene::getNodeByItemPos(QGraphicsItem* item, QPointF pos) const {
+    std::cout << "QDMGraphicsScene::getNodeByItemPos - 1 , item type: " << item->type() << std::endl;
+
+    auto nodeItem = this->scene->grScene->isClickingOn(pos, GRAPH_TYPE_NODE);
+    if (nodeItem) {
+        auto grNode = qgraphicsitem_cast<QDMGraphicsNode*>(nodeItem);
         return grNode->node;
-    } else if (this->scene->grScene->isClickingOn(item->pos(), GRAPH_TYPE_SOCKET)) {
-        auto grSocket = qgraphicsitem_cast<QDMGraphicsSocket*>(item);
+    } else if ((nodeItem = this->scene->grScene->isClickingOn(item->pos(), GRAPH_TYPE_SOCKET))) {
+        auto grSocket = qgraphicsitem_cast<QDMGraphicsSocket*>(nodeItem);
         return grSocket->socket->node;
     }
     return nullptr;

@@ -24,6 +24,7 @@ public:
     explicit QDMNodeContentWidget(Node* node, QWidget *parent=Q_NULLPTR);
     ~QDMNodeContentWidget() override = default;
     virtual QDMNodeContentWidget* init();
+    Node *node;
     void setEditingFlag(int value);
     json serialize() override;
     bool deserialize(json data, node_HashMap *hashMap, bool restoreId) override;
@@ -31,7 +32,6 @@ public:
                               json& changeMap, json& removeMap) override {};
     void deserializeIncremental(json changeMap, bool isUndo, node_HashMap *hashMap) override {};
 protected:
-    Node *node;
     QVBoxLayout *layout;
     QLabel *wdgLabel;
 };
