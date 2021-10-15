@@ -133,9 +133,9 @@ void SceneHistory::storeHistory(const QString& desc, VIEW_HIST::Flags opType,
         this->historyCurStep += 1;
     }
 
-    std::cout << "====================================================== ↓ store_history" << std::endl;
-    std::cout << std::setw(4) << this->historyStack[this->historyCurStep] << std::endl;
-    std::cout << "====================================================== ↑ store_history" << std::endl;
+//    std::cout << "====================================================== ↓ store_history" << std::endl;
+//    std::cout << std::setw(4) << this->historyStack[this->historyCurStep] << std::endl;
+//    std::cout << "====================================================== ↑ store_history" << std::endl;
 
     for (const auto& callback : this->_historyModifiedListeners)
         callback();

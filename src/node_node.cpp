@@ -79,13 +79,13 @@ void Node::initSockets(std::vector<SOCKET_TYPE> _inputs,
     }
     size_t counter = 0;
     for (auto i : _inputs) {
-        auto socket = new Socket(this, counter, this->inputSocketPos, i, !!_inputs.size());
+        auto socket = new Socket(this, counter, this->inputSocketPos, i, _inputs.size());
         ++counter;
         this->inputs.push_back(socket);
     }
     counter = 0;
     for (auto i : _outputs) {
-        auto socket = new Socket(this, counter, this->outputSocketPos, i, !!_outputs.size());
+        auto socket = new Socket(this, counter, this->outputSocketPos, i, _outputs.size());
         ++counter;
         this->outputs.push_back(socket);
     }
@@ -169,7 +169,7 @@ void Node::removeSocket(Socket *s)
 
 // get coordinate of Socket object from specified position and number
 // the return Point{x, y} is the offset coordinate of socket to its belonging node
-QPointF Node::getSocketPos(int index, SOCKET_POSITION pos, size_t numOutOf) const
+QPointF Node::getSocketPos(size_t index, SOCKET_POSITION pos, size_t numOutOf) const
 {
     qreal x, y;
     if (pos == SCT_AT_LEFT_TOP || pos == SCT_AT_LEFT_CENTER || pos == SCT_AT_LEFT_BOTTOM) {
@@ -188,7 +188,7 @@ QPointF Node::getSocketPos(int index, SOCKET_POSITION pos, size_t numOutOf) cons
         auto topOffset = this->grNode->titleHeight + 2 * this->grNode->titleVertPad +
                 this->grNode->edgePadding;
         auto availableHeight = nodeHeight - topOffset;
-        auto totalHeightAllSockets = numSockets * this->socketSpacing;
+
         y = topOffset + availableHeight / 2.0 + (index - 0.5) * this->socketSpacing;
         if (numSockets > 1)
             y -= this->socketSpacing * (numSockets - 1) / 2.0;

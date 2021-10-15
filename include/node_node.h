@@ -50,7 +50,7 @@ public:
     QString title() const;
     void title(const std::string& _title);
     void removeSocket(Socket* s=Q_NULLPTR);
-    QPointF getSocketPos(int index, SOCKET_POSITION pos, size_t numOutOf = 1) const;
+    QPointF getSocketPos(size_t index, SOCKET_POSITION pos, size_t numOutOf = 1) const;
     void updateAttachedWires();
     void selectAttachedWires(bool revert=false);
     void setSelectedSilently(bool isSelected) const;

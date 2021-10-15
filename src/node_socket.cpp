@@ -32,14 +32,15 @@ Socket::Socket(Node *node, size_t index, SOCKET_POSITION pos, SOCKET_TYPE type,
 void Socket::setSocketPos() const
 {
     // use the relative position from its parent node
-    this->grSocket->setPos(this->node->getSocketPos(this->index, this->position,
-                                                    this->countOnThisNodeSide));
+    this->grSocket->setPos(this->node->getSocketPos(
+            this->index, this->position, this->countOnThisNodeSide));
 }
 
 // get socket's absolute position coordinate
 QPointF Socket::getSocketPos() const
 {
-    auto posToNode = this->node->getSocketPos(this->index, this->position);
+    auto posToNode = this->node->getSocketPos(
+            this->index, this->position, this->countOnThisNodeSide);
     return posToNode + this->node->pos();
 }
 
