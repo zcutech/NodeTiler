@@ -81,9 +81,7 @@ void QDMGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
 QGraphicsItem* QDMGraphicsScene::isClickingOn(QPointF pos, GRAPHICS_TYPE theType)
 {
     QList<QGraphicsItem *> items = this->items(pos);
-    std::cout << "QDMGraphicsScene::isClickingOn - 1 , items size: " << items.size() << std::endl;
     for (auto i = items.rbegin(); i != items.rend(); ++i) {
-        std::cout << "QDMGraphicsScene::isClickingOn - 2 , items type: " << (*i)->type() << std::endl;
         if (this->isTypeOf(*i, theType))
             return *i;
     }
@@ -113,8 +111,6 @@ bool QDMGraphicsScene::itemIsMine(QGraphicsItem *grItem) {
 }
 
 Node* QDMGraphicsScene::getNodeByItemPos(QGraphicsItem* item, QPointF pos) const {
-    std::cout << "QDMGraphicsScene::getNodeByItemPos - 1 , item type: " << item->type() << std::endl;
-
     auto nodeItem = this->scene->grScene->isClickingOn(pos, GRAPH_TYPE_NODE);
     if (nodeItem) {
         auto grNode = qgraphicsitem_cast<QDMGraphicsNode*>(nodeItem);

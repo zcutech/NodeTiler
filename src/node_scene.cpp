@@ -143,26 +143,12 @@ void Scene::addWire(Wire *wire) {
 void Scene::removeNode(Node *node) {
     auto it = std::find(this->nodes.begin(), this->nodes.end(), node);
     if (it != this->nodes.end()) {
-        for (auto &socket : node->inputs) {
-            std::cout << "Scene::removeNode - 1 - check wires on socket " << *socket << ", num: " << socket->wires.size() << std::endl;
-        }
         this->hashMap.erase(node->id);
-//        this->nodes.erase(std::remove(this->nodes.begin(), this->nodes.end(), node),
-//                          this->nodes.end());
-        for (auto &socket : node->inputs) {
-            std::cout << "Scene::removeNode - 2 - check wires on socket " << *socket << ", num: " << socket->wires.size() << std::endl;
-        }
         for (auto s : node->inputs)
             this->hashMap.erase(s->id);
-        for (auto &socket : node->inputs) {
-            std::cout << "Scene::removeNode - 3 - check wires on socket " << *socket << ", num: " << socket->wires.size() << std::endl;
-        }
         for (auto s : node->outputs)
             this->hashMap.erase(s->id);
         this->nodes.erase(it);
-        for (auto &socket : node->inputs) {
-            std::cout << "Scene::removeNode - 4 - check wires on socket " << *socket << ", num: " << socket->wires.size() << std::endl;
-        }
     }
 }
 
