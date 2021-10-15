@@ -24,6 +24,7 @@ public:
     virtual QDMGraphicsNode* init();
     QString title() const;
     void title(const QString& t);
+    void updateSizeFromContent();
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -42,7 +43,7 @@ protected:
     virtual void initAssets();
     virtual void initUI();
     void initTitle();
-    void initContent();
+    virtual void initContent();
     QDMNodeContentWidget *content;
     QGraphicsProxyWidget *grContent;
     QString _title;

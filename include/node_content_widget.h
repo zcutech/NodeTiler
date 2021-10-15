@@ -25,6 +25,7 @@ public:
     ~QDMNodeContentWidget() override = default;
     virtual QDMNodeContentWidget* init();
     Node *node;
+    void resizeEvent(QResizeEvent *event) override;
     void setEditingFlag(int value);
     json serialize() override;
     bool deserialize(json data, node_HashMap *hashMap, bool restoreId) override;

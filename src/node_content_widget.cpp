@@ -6,6 +6,7 @@
 
 #include "node_node.h"
 #include "node_scene.h"
+#include "node_graphics_node.h"
 #include "node_graphics_scene.h"
 #include "node_graphics_view.h"
 
@@ -30,6 +31,17 @@ QDMNodeContentWidget* QDMNodeContentWidget::init()
     this->layout->addWidget(new QDMQTextEdit(QString("Foo bar - %1").arg(this->id.c_str())));
 
     return this;
+}
+
+void QDMNodeContentWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    if (this->node->grNode
+        && event->oldSize() != QSize{-1, -1}
+        && event->oldSize() != event->size()) {
+        this->node->grNode->updateSizeFromContent();
+    }
 }
 
 void QDMNodeContentWidget::setEditingFlag(int value) {

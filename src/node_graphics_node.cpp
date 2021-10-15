@@ -79,6 +79,12 @@ void QDMGraphicsNode::title(const QString& t)
     this->title_item->setPlainText(this->_title);
 }
 
+void QDMGraphicsNode::updateSizeFromContent()
+{
+    this->width = this->content->width();
+    this->height = this->content->height() + this->titleHeight;
+}
+
 void QDMGraphicsNode::onSelected(bool mergeLastDeselection)
 {
     emit this->node->scene->grScene->itemSelected(mergeLastDeselection);
