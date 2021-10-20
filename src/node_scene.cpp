@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 #include "node_node.h"
 #include "node_wire.h"
