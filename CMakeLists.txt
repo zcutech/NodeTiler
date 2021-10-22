@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# ToDo: Make sure this PATH is set correctly or CMAKE_PREFIX_PATH was OK itself.
+# ToDo: Make sure this PATH is set correctly
 list(APPEND CMAKE_PREFIX_PATH "C:/Qt/install/path/like/Qt/5.9.8/mingw53_32")
 
 
@@ -15,7 +15,6 @@ find_package(Qt5 COMPONENTS
         Gui
         Widgets
         REQUIRED)
-
 
 file(GLOB Sources ./src/*.cpp)
 file(GLOB Headers ./include/*.h)
