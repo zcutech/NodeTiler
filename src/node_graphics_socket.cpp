@@ -11,9 +11,10 @@
 #include "node_graphics_wire.h"
 
 
-QDMGraphicsSocket::QDMGraphicsSocket(Socket *socket, SOCKET_TYPE socket_type):
+QDMGraphicsSocket::QDMGraphicsSocket(Socket *socket, SOCKET_TYPE socket_type, std::string text):
     QGraphicsItem(dynamic_cast<QGraphicsItem *>(socket->node->grNode)),
     socket(socket),
+    text(std::move(text)),
     radius(6.0),                                     // 半径大小
     outlineWidth(1.0),                               // 轮廓线宽
     colorOutline(QColor(0x00, 0x00, 0x00, 0xFF)),    // 轮廓颜色
@@ -38,19 +39,29 @@ void
 QDMGraphicsSocket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                        QWidget *widget=Q_NULLPTR)
 {
-    // 绘制圆圈
+    // draw circle
     painter->setBrush(this->brush);
     painter->setPen(this->pen);
     painter->drawEllipse(-this->radius, -this->radius, 2 * this->radius, 2 * this->radius);
+
+    // draw text
+    if (!this->text.empty()) {
+        auto textHeight = painter->fontMetrics().capHeight();
+        auto textWidth = painter->fontMetrics().width(this->text.c_str());
+        // text is on the left or right side
+        auto s = this->socket->isOutput() ? -1 : 1;
+        auto w = this->socket->isOutput() ? -textWidth : 0;
+        painter->drawText(s * this->radius * 2 + w, textHeight / 2.0, this->text.c_str());
+    }
 }
 
 QRectF QDMGraphicsSocket::boundingRect() const
 {
-    return QRectF(
+    return {
             -this->radius - this->outlineWidth,
             -this->radius - this->outlineWidth,
             2 * (this->radius + this->outlineWidth),
             2 * (this->radius + this->outlineWidth)
-    );
+    };
 }
 

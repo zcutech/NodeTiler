@@ -663,22 +663,22 @@ bool QDMGraphicsView::_checkEndValid(QMouseEvent *event) {
         this->_socketDraggingWire->state &= ~WIRE_STATE::WIRE_STATE_HANG;
         auto item = qgraphicsitem_cast<QDMGraphicsSocket*>(grItem);
         auto socket = item->socket;
-        // 输入端口只允许一个wire
-        if (!socket->isOutput() && socket->hasWire()) {
+        // two sockets have been bound each other, can't add more wires
+        if (boundSocket->shareWireWith(socket)) {
             this->_socketDraggingWire->state &= ~WIRE_STATE::WIRE_STATE_GOON;
             return false;
         }
-        // 两个端口不能同时为输入或输出
+        // two sockets can't both be input or output
         else if ((boundSocket->isOutput() ^ socket->isOutput()) == 0) {
             this->_socketDraggingWire->state &= ~WIRE_STATE::WIRE_STATE_GOON;
             return false;
         }
-        // 两个端口不能在同一个node上
+        // wires can't be bound on two sockets of the same one node
         else if (boundSocket->node == socket->node) {
             this->_socketDraggingWire->state &= ~WIRE_STATE::WIRE_STATE_GOON;
             return false;
         }
-        // 可以正常连接
+        // able to bind
         else {
             this->_socketDraggingWire->state |= WIRE_STATE::WIRE_STATE_GOON;
             return true;

@@ -17,7 +17,8 @@ class Wire;
 class QDMGraphicsSocket : public QGraphicsItem
 {
 public:
-    explicit QDMGraphicsSocket(Socket *socket, SOCKET_TYPE socket_type=SCT_TYPE_1);
+    explicit QDMGraphicsSocket(Socket *socket, SOCKET_TYPE socket_type=SCT_TYPE_1,
+                               std::string text="");
     ~QDMGraphicsSocket() override = default;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
@@ -25,6 +26,7 @@ public:
     enum { Type = GRAPH_TYPE_SOCKET };
     int type() const override { return Type; }           // 用于在scene事件中判断对象类型，以及cast
 private:
+    std::string text;
     float radius;
     float outlineWidth;
     std::vector<QColor> _colors;

@@ -5,6 +5,7 @@
 #include "node_content_widget.h"
 
 #include "node_node.h"
+#include "node_socket.h"
 #include "node_scene.h"
 #include "node_graphics_node.h"
 #include "node_graphics_scene.h"
@@ -41,6 +42,11 @@ void QDMNodeContentWidget::resizeEvent(QResizeEvent *event)
         && event->oldSize() != QSize{-1, -1}
         && event->oldSize() != event->size()) {
         this->node->grNode->updateSizeFromContent();
+        // refresh socket position
+        for (const auto& s : this->node->inputs)
+            s->setSocketPos();
+        for (const auto& s : this->node->outputs)
+            s->setSocketPos();
     }
 }
 

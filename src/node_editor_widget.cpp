@@ -125,6 +125,7 @@ void NodeEditorWidget::addNode()
                           {SCT_TYPE_1, SCT_TYPE_3, SCT_TYPE_4}, {SCT_TYPE_2,}))->init();
     auto node2 = (new Node(this->scene, "Demo Node2",
                           {SCT_TYPE_1, SCT_TYPE_5, SCT_TYPE_6}, {SCT_TYPE_2,}))->init();
+//    node2->addSockets(false, SCT_TYPE_2, "output", "output");
 //    auto node3 = (new Node(this->scene, "Demo Node3",
 //                          {SCT_TYPE_1, SCT_TYPE_1, SCT_TYPE_3}, {SCT_TYPE_2,}))->init();
     node1->setPos(-350, -250);

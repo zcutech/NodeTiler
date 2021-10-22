@@ -91,6 +91,29 @@ void Node::initSockets(std::vector<SOCKET_TYPE> _inputs,
     }
 }
 
+void Node::addSockets(bool isInput, SOCKET_TYPE socketType,
+                      const std::string& name, const std::string& desc)
+{
+    Socket* socket;
+
+    if (isInput) {
+        socket = new Socket(this, this->inputs.size(), this->inputSocketPos, socketType,
+                            this->inputs.size() + 1, name, desc);
+        for (auto && s : this->inputs)
+            s->countOnThisNodeSide = this->inputs.size() + 1;
+        this->inputs.push_back(socket);
+    } else {
+        socket = new Socket(this, this->outputs.size(), this->outputSocketPos, socketType,
+                            this->outputs.size() + 1, name, desc);
+        for (auto && s : this->outputs)
+            s->countOnThisNodeSide = this->outputs.size() + 1;
+        this->outputs.push_back(socket);
+    }
+
+    this->scene->hashMap[socket->id] = socket;
+    this->scene->hasBeenModified(true);
+}
+
 Socket* Node::findSocketIBySerial(json& socketSerial)
 {
     for (auto &s : this->inputs) {

@@ -21,11 +21,15 @@ class Socket : public Serializable
 {
 public:
     explicit Socket(Node *node, size_t index=0, SOCKET_POSITION pos=SCT_AT_LEFT_TOP,
-           SOCKET_TYPE socket_type=SCT_TYPE_1, size_t countOnThisNodeSide=1);
+           SOCKET_TYPE socket_type=SCT_TYPE_1, size_t countOnThisNodeSide=1,
+           std::string name="", std::string desc="");
     ~Socket() = default;
     Node *node;
     size_t index;
     SOCKET_TYPE socketType;
+    size_t countOnThisNodeSide;
+    std::string name;
+    std::string desc;
     std::vector<Wire*> wires;
     QDMGraphicsSocket *grSocket;
     void setSocketPos() const;
@@ -34,6 +38,7 @@ public:
     void delAttachedWire(Wire *w);
     void updateAttachedWires();
     bool hasWire(Wire *w=Q_NULLPTR);
+    bool shareWireWith(Socket* s);
     void clearAllWires();
     bool isOutput() const;
     SOCKET_POSITION position;
@@ -47,8 +52,6 @@ public:
     static void extractSerialDiff(json anotherSerial, json myArray,
                                   json& changeMap, json& removeMap, json& foundSerial);
     static void mergeWithIncrement(json& origSerial, json changeMap, json removeMap);
-private:
-    size_t countOnThisNodeSide;
 };
 
 #endif //NODETILER_NODE_SOCKET_H

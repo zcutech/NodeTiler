@@ -5,6 +5,7 @@
 #include "node_socket.h"
 
 #include <iostream>
+#include <utility>
 
 #include "node_graphics_socket.h"
 #include "node_graphics_scene.h"
@@ -14,17 +15,19 @@
 
 
 Socket::Socket(Node *node, size_t index, SOCKET_POSITION pos, SOCKET_TYPE type,
-               size_t countOnThisNodeSide):
+               size_t countOnThisNodeSide, std::string name, std::string desc):
     Serializable(),
     node(node),
     index(index),
     position(pos),
     socketType(type),
     countOnThisNodeSide(countOnThisNodeSide),
+    name(std::move(name)),
+    desc(std::move(desc)),
     grSocket(Q_NULLPTR),
     wires({})
 {
-    this->grSocket = new QDMGraphicsSocket(this, this->socketType);
+    this->grSocket = new QDMGraphicsSocket(this, this->socketType, this->desc);
 
     this->setSocketPos();
 }
@@ -74,6 +77,21 @@ bool Socket::hasWire(Wire *wire)
     } else {
         return !this->wires.empty();
     }
+    return false;
+}
+
+bool Socket::shareWireWith(Socket* s)
+{
+    if (!this->wires.empty() && !s->wires.empty()) {
+        for (const auto &w : this->wires) {
+            std::vector<Wire*>::iterator it;
+            for (it = s->wires.begin(); it != s->wires.end(); ++it) {
+                if (*it == w)
+                    return true;
+            }
+        }
+    }
+
     return false;
 }
 
