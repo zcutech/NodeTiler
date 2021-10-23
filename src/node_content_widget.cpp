@@ -42,11 +42,6 @@ void QDMNodeContentWidget::resizeEvent(QResizeEvent *event)
         && event->oldSize() != QSize{-1, -1}
         && event->oldSize() != event->size()) {
         this->node->grNode->updateSizeFromContent();
-        // refresh socket position
-        for (const auto& s : this->node->inputs)
-            s->setSocketPos();
-        for (const auto& s : this->node->outputs)
-            s->setSocketPos();
     }
 }
 

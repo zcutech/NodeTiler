@@ -8,6 +8,7 @@
 
 #include "node_node.h"
 #include "node_scene.h"
+#include "node_socket.h"
 #include "node_content_widget.h"
 #include "node_scene_history.h"
 #include "node_graphics_scene.h"
@@ -83,6 +84,16 @@ void QDMGraphicsNode::updateSizeFromContent()
 {
     this->width = this->content->width();
     this->height = this->content->height() + this->titleHeight;
+
+    // refresh socket position
+    for (const auto& s : this->node->inputs) {
+        s->setSocketPos();
+        s->updateAttachedWires();
+    }
+    for (const auto& s : this->node->outputs) {
+        s->setSocketPos();
+        s->updateAttachedWires();
+    }
 }
 
 void QDMGraphicsNode::onSelected(bool mergeLastDeselection)

@@ -25,6 +25,7 @@ public:
     ~QDMNodeContentWidget() override = default;
     virtual QDMNodeContentWidget* init();
     Node *node;
+    QVBoxLayout *layout;
     void resizeEvent(QResizeEvent *event) override;
     void setEditingFlag(int value);
     json serialize() override;
@@ -33,7 +34,6 @@ public:
                               json& changeMap, json& removeMap) override {};
     void deserializeIncremental(json changeMap, bool isUndo, node_HashMap *hashMap) override {};
 protected:
-    QVBoxLayout *layout;
     QLabel *wdgLabel;
 };
 
