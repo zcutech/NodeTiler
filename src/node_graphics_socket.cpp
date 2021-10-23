@@ -46,6 +46,8 @@ QDMGraphicsSocket::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     // draw text
     if (!this->text.empty()) {
+        painter->setPen(Qt::white);
+
         auto textHeight = painter->fontMetrics().capHeight();
         auto textWidth = painter->fontMetrics().width(this->text.c_str());
         // text is on the left or right side
